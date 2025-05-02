@@ -43,10 +43,9 @@ TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
 
 # AWS does not come with a working storage class even on automode.
 if [[ "${BUFSTREAM_CLOUD}" == "aws" ]] ; then
-  echo "Creating storage class..."
+  echo "Creating AWS storage class..."
   kubectl \
       --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-      --context $(cat "${CONFIG_GEN_PATH}/context") \
       apply -f ../config/aws-storage-class.yaml
 fi
 
@@ -54,27 +53,24 @@ echo "Create namespace..."
 # Use dry run + apply to ignore existing namespace.
 kubectl \
   --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-  --context $(cat "${CONFIG_GEN_PATH}/context") \
   create namespace "${BUFSTREAM_NAMESPACE:-bufstream}" --dry-run=client -o yaml \
   | kubectl \
     --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-    --context $(cat "${CONFIG_GEN_PATH}/context") \
     apply -f -
 
 echo "Installing ETCD..."
 helm \
   --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-  --kube-context $(cat "${CONFIG_GEN_PATH}/context") \
   upgrade bufstream-etcd --install \
   oci://registry-1.docker.io/bitnamicharts/etcd \
   --namespace "${BUFSTREAM_NAMESPACE:-bufstream}" \
   --values ../config/etcd.yaml \
+  --values "../config/etcd-${BUFSTREAM_CLOUD}.yaml" \
   --wait
 
 echo "Installing Bufstream..."
 helm \
   --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-  --kube-context $(cat "${CONFIG_GEN_PATH}/context") \
   upgrade bufstream --install \
   oci://us-docker.pkg.dev/buf-images-1/bufstream/charts/bufstream \
   --version "${BUFSTREAM_VERSION}" \

@@ -15,6 +15,8 @@ To run it, you need to create a `tfvars` file that includes the required Terrafo
 See below for the required variables. There is a README for each module with more details on the
 variables that can be set.
 
+Note that you'll also need to include a provider under the folder of the desired cloud.
+
 Required environment variables:
 
 | Variable          | Description                                                 |
@@ -84,3 +86,21 @@ Recommended variables in `tfvars`:
 | Variable     | Description              |
 |--------------|--------------------------|
 | cluster_name | Name for the GKE cluster |
+
+## Azure
+
+By default, the module creates all resources necessary to deploy a Kubernetes cluster to the desired project.
+It also creates some specific resources required for Bufstream: a storage account and container, a virtual network
+and required subnets, and the bufstream identity with its required role assignment to access storage.
+
+Required variables in `tfvars`:
+
+| Variable    | Description                                        |
+|-------------|----------------------------------------------------|
+| location    | Location where to store the bucket                 |
+
+Recommended variables in `tfvars`:
+
+| Variable     | Description              |
+|--------------|--------------------------|
+| cluster_name | Name for the AKS cluster |

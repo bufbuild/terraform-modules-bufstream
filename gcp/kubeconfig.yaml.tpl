@@ -1,5 +1,17 @@
 apiVersion: v1
 kind: Config
+clusters:
+  - name: gke_${project}_${region}_${cluster_name}
+    cluster:
+      certificate-authority-data: ${cluster_certificate}
+      server: https://${cluster_host}
+      tls-server-name: kubernetes.default
+contexts:
+  - name: gke_${project}_${region}_${cluster_name}
+    context:
+      cluster: gke_${project}_${region}_${cluster_name}
+      user: gke
+current-context: gke_${project}_${region}_${cluster_name}
 users:
   - name: gke
     user:
@@ -13,14 +25,3 @@ users:
         %{~ endif ~}
         installHint: Install gke-gcloud-auth-plugin for use with kubectl by following https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
         provideClusterInfo: true
-clusters:
-  - name: gke_${project}_${region}_${cluster_name}
-    cluster:
-      certificate-authority-data: ${cluster_certificate}
-      server: https://${cluster_host}
-      tls-server-name: kubernetes.default
-contexts:
-  - name: gke_${project}_${region}_${cluster_name}
-    context:
-      cluster: gke_${project}_${region}_${cluster_name}
-      user: gke
