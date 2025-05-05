@@ -2,6 +2,7 @@ replicaCount: 3
 persistence:
   enabled: true
   size: 10Gi
+  storageClass: "premium-rwo"
 autoCompactionMode: periodic
 autoCompactionRetention: 30s
 removeMemberOnContainerTermination: false

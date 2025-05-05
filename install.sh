@@ -42,11 +42,11 @@ TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
 
 # AWS does not come with a working storage class even on automode.
-if [[ "${BUFSTREAM_CLOUD}" == "aws" ]] ; then
-  echo "Creating AWS storage class..."
+if [[ "${BUFSTREAM_CLOUD}" == "aws" || "${BUFSTREAM_CLOUD}" == "azure" ]] ; then
+  echo "Creating ${BUFSTREAM_CLOUD} storage class..."
   kubectl \
       --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-      apply -f ../config/aws-storage-class.yaml
+      apply -f "../config/${BUFSTREAM_CLOUD}-storage-class.yaml"
 fi
 
 echo "Create namespace..."
@@ -65,7 +65,6 @@ helm \
   oci://registry-1.docker.io/bitnamicharts/etcd \
   --namespace "${BUFSTREAM_NAMESPACE:-bufstream}" \
   --values ../config/etcd.yaml \
-  --values "../config/etcd-${BUFSTREAM_CLOUD}.yaml" \
   --wait
 
 echo "Installing Bufstream..."
