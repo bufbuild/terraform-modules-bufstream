@@ -25,6 +25,6 @@ users:
         command: kubelogin
         env: null
         installHint: |
-          kubelogin is not installed which is required to connect to AAD enabled cluster.
-          To learn more, please go to https://aka.ms/aks/kubelogin
+          kubelogin is not installed, which is required to connect to AAD enabled cluster.
+          To learn more, go to https://aka.ms/aks/kubelogin
         provideClusterInfo: false

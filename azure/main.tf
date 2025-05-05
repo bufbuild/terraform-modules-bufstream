@@ -11,14 +11,7 @@ resource "azurerm_resource_provider_registration" "registrations" {
         "EnableApplicationGatewayNetworkIsolation" : true,
       }
     },
-    "Microsoft.ContainerService" = {
-      // Use Azure Linux 3.0,
-      // when creating clusters or node pools,
-      // with the AzureLinux OS SKU.
-      features = {
-        "AzureLinuxV3Preview" : true
-      }
-    },
+    "Microsoft.ContainerService" = {features = {}},
     "Microsoft.Storage" = {features = {}},
   }
 

@@ -39,7 +39,7 @@ variable "cluster_dns_service_ip" {
 variable "kubernetes_version" {
   description = "Kubernetes version to use."
   type        = string
-  default     = "1.31"
+  default     = "1.32"
 }
 
 variable "cluster_create" {

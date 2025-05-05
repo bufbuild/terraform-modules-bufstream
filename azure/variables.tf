@@ -82,7 +82,7 @@ variable "services_subnet_cidr" {
 variable "kubernetes_version" {
   description = "Kubernetes version to use."
   type        = string
-  default     = "1.31"
+  default     = "1.32"
 }
 
 variable "cluster_vm_size" {
