@@ -4,7 +4,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Location of the AKS cluster."
+  description = "Where to deploy the resources."
   type        = string
 }
 

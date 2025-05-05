@@ -45,7 +45,7 @@ variable "storage_tier" {
 variable "storage_replication_type" {
   description = "Storage account replication type"
   type        = string
-  default     = "LRS"
+  default     = "RAGRS"
 }
 
 variable "storage_large_file_share_enabled" {
