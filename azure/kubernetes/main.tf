@@ -42,6 +42,8 @@ resource "azurerm_kubernetes_cluster" "cluster" {
 
     os_sku = "AzureLinux"
 
+    zones = ["1", "2", "3"]
+
     // Defaults, if not set, causes changes after initial creation
     upgrade_settings {
       drain_timeout_in_minutes      = 0
@@ -77,16 +79,30 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   lifecycle {
     ignore_changes = [
       kubernetes_version,
+      azure_active_directory_role_based_access_control[0].tenant_id,
     ]
   }
 }
 
+data "azuread_user" "actor" {
+  count = var.cluster_grant_admin == true && var.cluster_grant_actor != null ? 1 : 0
+
+  user_principal_name = var.cluster_grant_actor
+}
+
 resource "azurerm_role_assignment" "bufstream" {
-  count = var.cluster_grant_admin_to_caller ? 1 : 0
+  count = var.cluster_grant_admin ? 1 : 0
 
   scope                = local.cluster_ref.id
   role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = var.cluster_grant_actor != null ? data.azuread_user.actor[0].object_id : data.azurerm_client_config.current.object_id
+
+  lifecycle {
+    # The plan will continously point this as a change otherwise.
+    ignore_changes = [
+      principal_id,
+    ]
+  }
 }
 
 data "azurerm_kubernetes_cluster" "cluster" {

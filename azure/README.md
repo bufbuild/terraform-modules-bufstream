@@ -8,7 +8,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.26.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.27.0 |
 | <a name="provider_local"></a> [local](#provider\_local) | 2.5.2 |
 
 ## Modules
@@ -45,8 +45,8 @@
 | <a name="input_cluster_subnet_name"></a> [cluster\_subnet\_name](#input\_cluster\_subnet\_name) | Name of cluster subnet in the VPC. | `string` | `"bufstream-cluster"` | no |
 | <a name="input_cluster_vm_size"></a> [cluster\_vm\_size](#input\_cluster\_vm\_size) | Cluster VM size. | `string` | `"Standard_D4as_v5"` | no |
 | <a name="input_generate_config_files_path"></a> [generate\_config\_files\_path](#input\_generate\_config\_files\_path) | If present, generate config files for bufstream values, kubeconfig and the context name at the selected path. | `string` | `null` | no |
-| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version to use. | `string` | `"1.31"` | no |
-| <a name="input_location"></a> [location](#input\_location) | Where to deploy the resources. | `string` | `"centralus"` | no |
+| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version to use. | `string` | `"1.32"` | no |
+| <a name="input_location"></a> [location](#input\_location) | Where to deploy the resources. A region with zones is required. | `string` | `"centralus"` | no |
 | <a name="input_pods_subnet_cidr"></a> [pods\_subnet\_cidr](#input\_pods\_subnet\_cidr) | CIDR of the pods subnet in the VPC. | `string` | `"10.192.2.0/23"` | no |
 | <a name="input_pods_subnet_create"></a> [pods\_subnet\_create](#input\_pods\_subnet\_create) | Whether to create a pods subnet in the VPC. | `bool` | `true` | no |
 | <a name="input_pods_subnet_name"></a> [pods\_subnet\_name](#input\_pods\_subnet\_name) | Name of pods subnet in the VPC. | `string` | `"bufstream-pods"` | no |
@@ -60,7 +60,7 @@
 | <a name="input_storage_grant_permissions"></a> [storage\_grant\_permissions](#input\_storage\_grant\_permissions) | Whether to grant necessary permissions on the storage account for the bufstream identity. | `string` | `true` | no |
 | <a name="input_storage_kind"></a> [storage\_kind](#input\_storage\_kind) | Storage account kind. | `string` | `"StorageV2"` | no |
 | <a name="input_storage_large_file_share_enabled"></a> [storage\_large\_file\_share\_enabled](#input\_storage\_large\_file\_share\_enabled) | Storage Large file share enabled. | `bool` | `false` | no |
-| <a name="input_storage_replication_type"></a> [storage\_replication\_type](#input\_storage\_replication\_type) | Storage account replication type. | `string` | `"LRS"` | no |
+| <a name="input_storage_replication_type"></a> [storage\_replication\_type](#input\_storage\_replication\_type) | Storage account replication type. | `string` | `"RAGRS"` | no |
 | <a name="input_storage_tier"></a> [storage\_tier](#input\_storage\_tier) | Storage account tier. | `string` | `"Standard"` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR of new VPC to create or use. | `string` | `"10.192.0.0/16"` | no |
 | <a name="input_vpc_create"></a> [vpc\_create](#input\_vpc\_create) | Whether to create a new VPC. | `bool` | `true` | no |

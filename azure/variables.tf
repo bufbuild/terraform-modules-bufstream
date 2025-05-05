@@ -11,7 +11,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Where to deploy the resources."
+  description = "Where to deploy the resources. A region that supports availability zones is required."
   type        = string
   default     = "centralus"
 }
@@ -109,10 +109,16 @@ variable "cluster_name" {
   default     = "bufstream"
 }
 
-variable "cluster_grant_admin_to_caller" {
-  description = "Grant admin role permission to the TF running actor."
+variable "cluster_grant_admin" {
+  description = "Grant admin role permission to the TF running actor. If cluster_admin_actor is set, use that, otherwise use the current caller."
   type        = bool
   default     = true
+}
+
+variable "cluster_grant_actor" {
+  description = "If cluster_grant_admin and this are set, grant cluster admin role to user with this email."
+  type        = string
+  default     = null
 }
 
 variable "bufstream_identity_create" {

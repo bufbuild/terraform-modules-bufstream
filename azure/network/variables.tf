@@ -16,7 +16,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Where to deploy the resources."
+  description = "Where to deploy the resources. A region that supports availability zones is required."
   type        = string
 }
 

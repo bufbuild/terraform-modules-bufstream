@@ -95,9 +95,9 @@ and required subnets, and the bufstream identity with its required role assignme
 
 Required variables in `tfvars`:
 
-| Variable    | Description                   |
-|-------------|-------------------------------|
-| location    | Where to deploy the resources |
+| Variable    | Description                                                                           |
+|-------------|---------------------------------------------------------------------------------------|
+| location    | Where to deploy the resources. A region that supports availability zones is required. |
 
 Recommended variables in `tfvars`:
 

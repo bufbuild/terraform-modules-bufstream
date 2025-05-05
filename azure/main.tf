@@ -73,7 +73,7 @@ module "kubernetes" {
   cluster_create = var.cluster_create
   cluster_name   = var.cluster_name
 
-  cluster_grant_admin_to_caller = true
+  cluster_grant_admin = var.cluster_grant_admin
 
   cluster_vm_size        = var.cluster_vm_size
   cluster_service_cidrs  = [var.services_subnet_cidr]
