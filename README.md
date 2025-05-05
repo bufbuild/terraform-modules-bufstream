@@ -6,7 +6,7 @@
 This repository compliments [Bufstream's documentation](https://buf.build/docs/bufstream/).
 
 Within, you'll find a collection of modules that assist with deploying a Kubernetes cluster in
-either Amazon Web Services (AWS) or Google Cloud Platform (GCP). These modules generate necessary resources
+Amazon Web Services (AWS), Google Cloud Platform (GCP) or Microsoft Azure. These modules generate necessary resources
 and then deploy Bufstream. The cluster created is meant to be used as a demo environment for those who would like
 to test Bufstream but don't have an existing Kubernetes cluster.
 
@@ -95,9 +95,9 @@ and required subnets, and the bufstream identity with its required role assignme
 
 Required variables in `tfvars`:
 
-| Variable    | Description                                        |
-|-------------|----------------------------------------------------|
-| location    | Location where to store the bucket                 |
+| Variable    | Description                   |
+|-------------|-------------------------------|
+| location    | Where to deploy the resources |
 
 Recommended variables in `tfvars`:
 

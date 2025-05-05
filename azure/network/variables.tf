@@ -16,7 +16,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Location where to create resources in."
+  description = "Where to deploy the resources."
   type        = string
 }
 
@@ -26,7 +26,7 @@ variable "address_space" {
 }
 
 variable "cluster_subnet_create" {
-  description = "Wether to create a cluster subnet in the VPC."
+  description = "Whether to create a cluster subnet in the VPC."
   type        = bool
   default     = true
 }
@@ -44,7 +44,7 @@ variable "cluster_subnet_cidr" {
 }
 
 variable "pods_subnet_create" {
-  description = "Wether to create a pods subnet in the VPC."
+  description = "Whether to create a pods subnet in the VPC."
   type        = bool
   default     = true
 }
