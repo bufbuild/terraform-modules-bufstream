@@ -105,5 +105,5 @@ Recommended variables in `tfvars`:
 |--------------|--------------------------|
 | cluster_name | Name for the AKS cluster |
 
-Note that due to Azure limitations, the plan will always show a diff as we include resources to find the current
+Note that due to Azure limitations, the plan will always show a diff because we include resources to find the current
 tenant_id being worked on.
