@@ -6,7 +6,7 @@
 This repository compliments [Bufstream's documentation](https://buf.build/docs/bufstream/).
 
 Within, you'll find a collection of modules that assist with deploying a Kubernetes cluster in
-either Amazon Web Services (AWS) or Google Cloud Platform (GCP). These modules generate necessary resources
+Amazon Web Services (AWS), Google Cloud Platform (GCP) or Microsoft Azure. These modules generate necessary resources
 and then deploy Bufstream. The cluster created is meant to be used as a demo environment for those who would like
 to test Bufstream but don't have an existing Kubernetes cluster.
 
@@ -14,6 +14,8 @@ The repo includes a convenience wrapper, `install.sh`, that requires you to set 
 To run it, you need to create a `tfvars` file that includes the required Terraform variables and any desired overrides.
 See below for the required variables. There is a README for each module with more details on the
 variables that can be set.
+
+Note that you'll also need to include a provider under the folder of the desired cloud.
 
 Required environment variables:
 
@@ -84,3 +86,24 @@ Recommended variables in `tfvars`:
 | Variable     | Description              |
 |--------------|--------------------------|
 | cluster_name | Name for the GKE cluster |
+
+## Azure
+
+By default, the module creates all resources necessary to deploy a Kubernetes cluster to the desired project.
+It also creates some specific resources required for Bufstream: a storage account and container, a virtual network
+and required subnets, and the bufstream identity with its required role assignment to access storage.
+
+Required variables in `tfvars`:
+
+| Variable    | Description                                                                           |
+|-------------|---------------------------------------------------------------------------------------|
+| location    | Where to deploy the resources. A region that supports availability zones is required. |
+
+Recommended variables in `tfvars`:
+
+| Variable     | Description              |
+|--------------|--------------------------|
+| cluster_name | Name for the AKS cluster |
+
+Note that due to Azure limitations, the plan will always show a diff because we include resources to find the current
+tenant_id being worked on.

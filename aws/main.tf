@@ -65,8 +65,6 @@ resource "aws_lb" "bufstream" {
 }
 
 locals {
-  context = module.kubernetes.cluster_arn
-
   bufstream_values = templatefile("${path.module}/bufstream.yaml.tpl", {
     region      = var.region
     bucket_name = module.storage.bucket_ref
@@ -82,14 +80,6 @@ locals {
     cluster_certificate = module.kubernetes.cluster_certificate
     aws_profile         = var.profile
   })
-}
-
-resource "local_file" "context" {
-  count    = var.generate_config_files_path != null ? 1 : 0
-  content  = local.context
-  filename = "${var.generate_config_files_path}/context"
-
-  file_permission = "0600"
 }
 
 resource "local_file" "bufstream_values" {

@@ -1,1 +1,3 @@
 gen/
+**/.terraform
+**/.terraform.lock.hcl

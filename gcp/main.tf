@@ -116,8 +116,6 @@ resource "google_compute_address" "ip" {
 data "google_client_openid_userinfo" "user" {}
 
 locals {
-  context = "gke_${var.project_id}_${module.kubernetes.cluster_region}_${module.kubernetes.cluster_name}"
-
   bufstream_values = templatefile("${path.module}/bufstream.yaml.tpl", {
     bucket_name                     = module.storage.bucket_ref
     bufstream_service_account_email = module.kubernetes.bufstream_service_account
@@ -133,14 +131,6 @@ locals {
 
     impersonate_account = strcontains(data.google_client_openid_userinfo.user.email, "gserviceaccount") ? data.google_client_openid_userinfo.user.email : null
   })
-}
-
-resource "local_file" "context" {
-  count    = var.generate_config_files_path != null ? 1 : 0
-  content  = local.context
-  filename = "${var.generate_config_files_path}/context"
-
-  file_permission = "0600"
 }
 
 resource "local_file" "bufstream_values" {
