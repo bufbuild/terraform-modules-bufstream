@@ -90,6 +90,12 @@ data "azuread_user" "actor" {
   user_principal_name = var.cluster_grant_actor
 }
 
+resource "azurerm_role_assignment" "network" {
+  scope                = var.cluster_vnet_subnet_id
+  role_definition_name = "Network Contributor"
+  principal_id         = local.cluster_ref.identity[0].principal_id
+}
+
 resource "azurerm_role_assignment" "bufstream" {
   count = var.cluster_grant_admin ? 1 : 0
 

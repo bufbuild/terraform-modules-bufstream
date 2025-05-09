@@ -119,9 +119,10 @@ module "storage" {
 
 locals {
   bufstream_values = templatefile("${path.module}/bufstream.yaml.tpl", {
-    account_name   = module.storage.storage_account_name
-    container_name = module.storage.storage_container_name
+    account_name       = module.storage.storage_account_name
+    container_name     = module.storage.storage_container_name
     bufstream_identity = module.kubernetes.bufstream_identity.client_id
+    ip_address         = var.internal_lb_address
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {

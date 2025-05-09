@@ -151,6 +151,12 @@ variable "wif_bufstream_k8s_service_account" {
   default     = "bufstream-service-account"
 }
 
+variable "internal_lb_address" {
+  description = "If set, create VPC-internal load balancer without SSL. This IP address must be in the cluster subnet."
+  type        = string
+  default     = ""
+}
+
 # Storage
 
 variable "storage_account_create" {
