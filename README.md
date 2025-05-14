@@ -26,7 +26,7 @@ Required environment variables:
 | BUFSTREAM_CLOUD   | Which cloud to deploy to. Must be `aws` or `gcp`              |
 | BUFSTREAM_TFVARS  | Path to the `tfvars` file                                     |
 
-Example of running the install script, you will need to replace the `<latest-version>` string with the version of bufstream you are planning to deploy:
+Example of running the install script, you will need to replace the `<latest-version>` string with the version of Bufstream you are planning to deploy:
 
 ```bash
 BUFSTREAM_KEYFILE=$PWD/keyfile \
