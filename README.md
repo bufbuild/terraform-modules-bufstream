@@ -19,18 +19,18 @@ Note that you'll also need to include a provider under the folder of the desired
 
 Required environment variables:
 
-| Variable          | Description                                                 |
-|-------------------|-------------------------------------------------------------|
-| BUFSTREAM_KEYFILE | Path to file containing Bufstream base64 encoded key from Buf       |
-| BUFSTREAM_VERSION | The version of Bufstream to deploy                          |
-| BUFSTREAM_CLOUD   | Which cloud to deploy to. Must be `aws` or `gcp` |
-| BUFSTREAM_TFVARS  | Path to the `tfvars` file                |
+| Variable          | Description                                                   |
+| ----------------- | ------------------------------------------------------------- |
+| BUFSTREAM_KEYFILE | Path to file containing Bufstream base64 encoded key from Buf |
+| BUFSTREAM_VERSION | The version of Bufstream to deploy                            |
+| BUFSTREAM_CLOUD   | Which cloud to deploy to. Must be `aws` or `gcp`              |
+| BUFSTREAM_TFVARS  | Path to the `tfvars` file                                     |
 
-Example of running the install script:
+Example of running the install script, you will need to replace the `<latest-version>` string with the version of bufstream you are planning to deploy:
 
 ```bash
 BUFSTREAM_KEYFILE=$PWD/keyfile \
-BUFSTREAM_VERSION=0.3.10 \
+BUFSTREAM_VERSION= <latest-version> \
 BUFSTREAM_CLOUD=gcp \
 BUFSTREAM_TFVARS=$PWD/bufstream.tfvars \
 install.sh
@@ -54,7 +54,7 @@ Bufstream service account can assume to access the bucket using EKS Pod Identity
 Required variables in `tfvars`:
 
 | Variable    | Description                                |
-|-------------|--------------------------------------------|
+| ----------- | ------------------------------------------ |
 | region      | Which region to deploy resources in        |
 | vpc_name    | Name of the VPC to create (or use)         |
 | bucket_name | Name of s3 bucket, must be globally unique |
@@ -63,7 +63,7 @@ Required variables in `tfvars`:
 Recommended variables in `tfvars`:
 
 | Variable            | Description                |
-|---------------------|----------------------------|
+| ------------------- | -------------------------- |
 | eks_cluster_name    | Name for the EKS cluster   |
 | eks_cluster_version | Version of the EKS cluster |
 
@@ -76,7 +76,7 @@ account can assume to access the bucket.
 Required variables in `tfvars`:
 
 | Variable    | Description                                        |
-|-------------|----------------------------------------------------|
+| ----------- | -------------------------------------------------- |
 | project_id  | ID of the project to deploy to                     |
 | region      | Which region to deploy resources to                |
 | bucket_name | Name of the bucket to use, must be globally unique |
@@ -84,7 +84,7 @@ Required variables in `tfvars`:
 Recommended variables in `tfvars`:
 
 | Variable     | Description              |
-|--------------|--------------------------|
+| ------------ | ------------------------ |
 | cluster_name | Name for the GKE cluster |
 
 ## Azure
@@ -95,14 +95,14 @@ and required subnets, and the bufstream identity with its required role assignme
 
 Required variables in `tfvars`:
 
-| Variable    | Description                                                                           |
-|-------------|---------------------------------------------------------------------------------------|
-| location    | Where to deploy the resources. A region that supports availability zones is required. |
+| Variable | Description                                                                           |
+| -------- | ------------------------------------------------------------------------------------- |
+| location | Where to deploy the resources. A region that supports availability zones is required. |
 
 Recommended variables in `tfvars`:
 
 | Variable     | Description              |
-|--------------|--------------------------|
+| ------------ | ------------------------ |
 | cluster_name | Name for the AKS cluster |
 
 Note that due to Azure limitations, the plan will always show a diff because we include resources to find the current
