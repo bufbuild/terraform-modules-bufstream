@@ -23,6 +23,20 @@ if [[ "${BUFSTREAM_TFVARS}" == "" ]] ; then
   exit 1
 fi
 
+case "${BUFSTREAM_METADATA}" in
+"postgres" | "etcd")
+  if [[ "${BUFSTREAM_METADATA}" == "postgres" && "${BUFSTREAM_CLOUD}" != "aws" ]]; then
+    echo "Postgres is only supported in aws at this time"
+    exit 1
+  fi
+  ;;
+
+*)
+  echo "\$BUFSTREAM_METADATA must be defined to 'postgres' or 'etcd'"
+  exit 1
+  ;;
+esac
+
 BUFSTREAM_KEYFILE=$(realpath "${BUFSTREAM_KEYFILE}")
 BUFSTREAM_TFVARS=$(realpath "${BUFSTREAM_TFVARS}")
 
@@ -36,7 +50,8 @@ pushd "${BUFSTREAM_CLOUD}"
 
 echo "Applying Terraform..."
 
-TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+ TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+  TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \
   terraform apply \
   --var-file "${BUFSTREAM_TFVARS}" \
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
@@ -58,14 +73,24 @@ kubectl \
     --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
     apply -f -
 
-echo "Installing ETCD..."
-helm \
-  --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
-  upgrade bufstream-etcd --install \
-  oci://registry-1.docker.io/bitnamicharts/etcd \
-  --namespace "${BUFSTREAM_NAMESPACE:-bufstream}" \
-  --values ../config/etcd.yaml \
-  --wait
+if [[ "${BUFSTREAM_METADATA}" == "postgres" ]] ; then
+  echo "Running Postgres setup script..."
+  KUBECONFIG="${CONFIG_GEN_PATH}/kubeconfig.yaml" \
+  NAMESPACE="${BUFSTREAM_NAMESPACE:-bufstream}" \
+    bash "${CONFIG_GEN_PATH}/${BUFSTREAM_CLOUD}-pg-setup.sh"
+fi
+
+if [[ "${BUFSTREAM_METADATA}" == "etcd" ]]; then
+  echo "Installing ETCD..."
+  helm \
+    --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
+    upgrade bufstream-etcd --install \
+    oci://registry-1.docker.io/bitnamicharts/etcd \
+    --namespace "${BUFSTREAM_NAMESPACE:-bufstream}" \
+    --values ../config/etcd.yaml \
+    --wait
+fi
+
 
 echo "Installing Bufstream..."
 helm \

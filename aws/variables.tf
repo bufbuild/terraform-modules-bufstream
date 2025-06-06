@@ -9,6 +9,17 @@ variable "profile" {
   type        = string
 }
 
+variable "bufstream_metadata" {
+  description = "DB type for Bufstream metadata"
+  type        = string
+
+  validation {
+    condition = contains(["postgres", "etcd"], var.bufstream_metadata)
+
+    error_message = "must be either 'postgres' or 'etcd'"
+  }
+}
+
 # Networking vars
 
 variable "create_vpc" {
@@ -120,4 +131,55 @@ variable "generate_config_files_path" {
   description = "If present, generate config files for bufstream values, kubeconfig and the context name at the selected path."
   type        = string
   default     = null
+}
+
+# Metadata vars
+
+variable "postgres_username" {
+  description = "Postgres username for RDS instance"
+  type        = string
+  default     = "postgres"
+}
+
+variable "postgres_password" {
+  description = "Postgres password for RDS instance"
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
+variable "rds_identifier" {
+  description = "Identifier of the RDS instance"
+  type        = string
+  default     = null
+}
+
+variable "rds_port" {
+  description = "Port number for the RDS instance"
+  type        = number
+  default     = 5432
+}
+
+variable "rds_instance_class" {
+  description = "RDS instance class to use"
+  type        = string
+  default     = "db.c6gd.xlarge"
+}
+
+variable "postgres_version" {
+  description = "Postgres version"
+  type        = string
+  default     = "17"
+}
+
+variable "rds_allocated_storage" {
+  description = "Allocated storage for RDS"
+  type        = number
+  default     = 20
+}
+
+variable "postgres_db_name" {
+  description = "Name of the database for metadata"
+  type        = string
+  default     = "bufstream"
 }
