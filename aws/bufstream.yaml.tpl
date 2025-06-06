@@ -24,8 +24,15 @@ kafka:
     port: 9092
 %{ endif ~}
 metadata:
+%{ if metadata == "etcd" ~}
   use: etcd
   etcd:
     addresses:
     - host: "bufstream-etcd.bufstream.svc.cluster.local"
       port: 2379
+%{ endif ~}
+%{ if metadata == "postgres" ~}
+  use: postgres
+  postgres:
+    secretName: bufstream-postgres
+%{ endif ~}

@@ -27,6 +27,26 @@ module "storage" {
   bufstream_role = module.kubernetes.bufstream_role_name
 }
 
+locals {
+  create_pg = var.bufstream_metadata == "postgres"
+}
+
+module "metadata" {
+  source = "./metadata"
+  count  = local.create_pg ? 1 : 0
+
+  vpc_id                = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
+  rds_identifier        = var.rds_identifier
+  subnet_ids            = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
+  postgres_username     = var.postgres_username
+  postgres_password     = var.postgres_password
+  rds_port              = var.rds_port
+  rds_instance_class    = var.rds_instance_class
+  postgres_version      = var.postgres_version
+  rds_allocated_storage = var.rds_allocated_storage
+  postgres_db_name      = var.postgres_db_name
+}
+
 # We create this here so we can have the hostname ready for bufstream.
 # The ingress controller will assume control after the helm install.
 resource "aws_security_group" "bufstream-nlb" {
@@ -70,6 +90,7 @@ locals {
     bucket_name = module.storage.bucket_ref
     hostname    = var.create_nlb ? aws_lb.bufstream[0].dns_name : ""
     role_arn    = var.use_pod_identity ? "" : module.kubernetes.bufstream_role_arn
+    metadata    = var.bufstream_metadata
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {
@@ -96,4 +117,20 @@ resource "local_file" "kubeconfig" {
   filename = "${var.generate_config_files_path}/kubeconfig.yaml"
 
   file_permission = "0600"
+}
+
+resource "null_resource" "pg_secret_apply" {
+  count = var.generate_config_files_path != null && local.create_pg ? 1 : 0
+
+  provisioner "local-exec" {
+    command     = "${path.module}/pg-secret.sh"
+    interpreter = ["/bin/bash", "-c"]
+
+
+    environment = {
+      DSN        = module.metadata[0].pg_dsn
+      KUBECONFIG = local_file.kubeconfig[0].content
+      NAMESPACE  = var.bufstream_k8s_namespace
+    }
+  }
 }
