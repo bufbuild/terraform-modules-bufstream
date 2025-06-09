@@ -15,16 +15,31 @@ To run it, you need to create a `tfvars` file that includes the required Terrafo
 See below for the required variables. There is a README for each module with more details on the
 variables that can be set.
 
+The install script relies on the following dependencies:
+
+* [Terraform](https://developer.hashicorp.com/terraform/install)
+* [kubectl](https://kubernetes.io/docs/tasks/tools/)
+* [Helm](https://helm.sh/docs/intro/install/)
+
+For AWS with Postgres:
+
+* [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
+* [jq](https://jqlang.org/download/)
+
 Note that you'll also need to include a provider under the folder of the desired cloud.
 
 Required environment variables:
 
-| Variable          | Description                                                   |
-| ----------------- | ------------------------------------------------------------- |
-| BUFSTREAM_KEYFILE | Path to file containing Bufstream base64 encoded key from Buf |
-| BUFSTREAM_VERSION | The version of Bufstream to deploy                            |
-| BUFSTREAM_CLOUD   | Which cloud to deploy to. Must be `aws` or `gcp`              |
-| BUFSTREAM_TFVARS  | Path to the `tfvars` file                                     |
+| Variable            | Description                                                              |
+| -----------------   | ------------------------------------------------------------------------ |
+| BUFSTREAM_KEYFILE   | Path to file containing Bufstream base64 encoded key from Buf            |
+| BUFSTREAM_VERSION   | The version of Bufstream to deploy                                       |
+| BUFSTREAM_CLOUD     | Which cloud to deploy to. Must be `aws` or `gcp`                         |
+| BUFSTREAM_TFVARS    | Path to the `tfvars` file                                                |
+| BUFSTREAM_METADATA  | Which database to use for metadata storage. Must be `etcd` or `postgres` |
+
+> [!WARNING]
+> Postgres is only supported in AWS at this time.
 
 Example of running the install script, you will need to replace the `<latest-version>` string with the version of Bufstream you are planning to deploy:
 
@@ -33,6 +48,7 @@ BUFSTREAM_KEYFILE=$PWD/keyfile \
 BUFSTREAM_VERSION= <latest-version> \
 BUFSTREAM_CLOUD=gcp \
 BUFSTREAM_TFVARS=$PWD/bufstream.tfvars \
+BUFSTREAM_METADATA=postgres \
 install.sh
 ```
 
@@ -50,6 +66,8 @@ kubectl --kubeconfig gen/kubeconfig get pods -n bufstream
 By default, the module creates all resources necessary to deploy an auto mode Kubernetes cluster to the desired
 account. It also creates some specific resources required for Bufstream: an S3 bucket and a role that the
 Bufstream service account can assume to access the bucket using EKS Pod Identity.
+
+If Postgres is selected for the metadata storage, an RDS instance and a Secrets Manager secret for the Postgres user password are also created.
 
 Required variables in `tfvars`:
 
