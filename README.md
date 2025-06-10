@@ -58,7 +58,7 @@ Use it to inspect the deployment or for troubleshooting.
 
 ```bash
 # Assuming the namespace Bufstream was deployed to is "bufstream"
-kubectl --kubeconfig gen/kubeconfig get pods -n bufstream
+kubectl --kubeconfig gen/kubeconfig.yaml get pods -n bufstream
 ```
 
 ## AWS

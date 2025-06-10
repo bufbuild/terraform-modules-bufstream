@@ -25,6 +25,7 @@ resource "random_string" "rds_identifier" {
   length  = 16
   special = false
   numeric = false
+  upper   = false
 }
 
 locals {
