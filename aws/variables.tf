@@ -41,8 +41,7 @@ variable "vpc_name" {
 }
 
 variable "vpc_cidr" {
-  description = "CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS recommends a /16 https://docs.aws.amazon.com/eks/latest/best-practices/custom-networking.html#_example_configuration"
-  type        = string
+  description = "CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS suggests a /19 but most will recommend a /16 to avoid IP exhaustion. https://docs.aws.amazon.com/eks/latest/best-practices/ip-opt.html#_mitigate_ip_exhaustion"
   default     = "10.64.0.0/16"
 }
 
