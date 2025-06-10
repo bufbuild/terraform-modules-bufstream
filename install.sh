@@ -49,6 +49,11 @@ cat "${BUFSTREAM_KEYFILE}" | helm registry login -u _json_key_base64 --password-
 pushd "${BUFSTREAM_CLOUD}"
 
 echo "Applying Terraform..."
+ TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+  TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \
+  terraform init \
+  --var-file "${BUFSTREAM_TFVARS}" \
+  --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
 
  TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
   TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \

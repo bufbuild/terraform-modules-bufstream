@@ -2,6 +2,8 @@
 
 PG_PASSWORD=$(
   aws secretsmanager get-secret-value \
+    --profile "${aws_profile}" \
+    --region "${region}" \
     --secret-id="${secret_arn}" \
     --query SecretString \
     --output text |
@@ -17,7 +19,7 @@ metadata:
   name: bufstream-postgres
   namespace:  "$NAMESPACE"
 type: Opaque,
-stringData: 
+stringData:
   dsn: "${dsn}"
 EOF
 )

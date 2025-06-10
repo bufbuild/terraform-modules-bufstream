@@ -102,8 +102,10 @@ locals {
   })
 
   pg_secret = local.create_pg ? templatefile("${path.module}/pg-setup.sh.tpl", {
-    secret_arn = module.postgres[0].pg_pw_secret_arn
-    dsn        = module.postgres[0].pg_dsn
+    region              = var.region
+    secret_arn          = module.postgres[0].pg_pw_secret_arn
+    dsn                 = module.postgres[0].pg_dsn
+    aws_profile         = var.profile
   }) : null
 }
 
