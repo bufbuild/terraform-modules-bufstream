@@ -9,8 +9,8 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.99.1 |
-| <a name="provider_local"></a> [local](#provider\_local) | 2.5.3 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | ~> 2.0 |
 
 ## Modules
 
@@ -61,7 +61,7 @@
 | <a name="input_s3_vpc_endpoint"></a> [s3\_vpc\_endpoint](#input\_s3\_vpc\_endpoint) | Optional endpoint for s3 in your region. | `string` | `null` | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | Optional IDs of the private subnets for the EKS cluster to use. | `list(string)` | `[]` | no |
 | <a name="input_use_pod_identity"></a> [use\_pod\_identity](#input\_use\_pod\_identity) | Use EKS pod identity (preferred) instead of IRSA. | `bool` | `true` | no |
-| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. | `string` | `"10.64.0.0/16"` | no |
+| <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS suggests a /19 but most will recommend a /16 to avoid IP exhaustion. https://docs.aws.amazon.com/eks/latest/best-practices/ip-opt.html#_mitigate_ip_exhaustion | `string` | `"10.64.0.0/16"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of VPC to use, required if `create_vpc` is `false` | `string` | `""` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of the VPC to create. | `string` | `"bufstream-vpc-1"` | no |
 
