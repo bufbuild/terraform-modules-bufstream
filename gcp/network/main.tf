@@ -1,6 +1,7 @@
 locals {
   vpc_ref    = var.vpc_create ? google_compute_network.network[0].self_link : data.google_compute_network.network[0].self_link
   subnet_ref = var.subnet_create ? google_compute_subnetwork.subnetwork[0].self_link : data.google_compute_subnetwork.subnetwork[0].self_link
+  vpc_id     = var.vpc_create ? google_compute_network.network[0].id : data.google_compute_network.network[0].id
 }
 
 data "google_compute_network" "network" {

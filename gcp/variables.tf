@@ -144,3 +144,73 @@ variable "generate_config_files_path" {
   type        = string
   default     = null
 }
+
+# Metadata
+
+variable "bufstream_metadata" {
+  description = "DB type for Bufstream metadata"
+  type        = string
+
+  validation {
+    condition = contains(["postgres", "etcd"], var.bufstream_metadata)
+
+    error_message = "must be either 'postgres' or 'etcd'"
+  }
+}
+
+variable "instance_name" {
+  description = "Name of the CloudSQL instance"
+  type        = string
+  default     = null
+}
+
+variable "database_version" {
+  description = "The database version for the CloudSQL instance - must be POSTGRES"
+  type        = string
+  default     = "POSTGRES_17"
+
+  validation {
+    condition     = startswith(var.database_version, "POSTGRES_")
+    error_message = "Database version must be a Postgres version"
+  }
+}
+
+variable "cloudsql_tier" {
+  description = "Tier for the database instance"
+  type        = string
+  default     = "db-custom-4-8192"
+}
+
+variable "cloudsql_disk_size" {
+  description = "Disk size in GB for the database instance"
+  type        = number
+  default     = 100
+}
+
+variable "cloudsql_availability_type" {
+  description = "Availability type of the database instance - must be 'REGIONAL' or 'ZONAL'"
+  type        = string
+  default     = "REGIONAL"
+
+  validation {
+    condition     = contains(["REGIONAL", "ZONAL"], var.cloudsql_availability_type)
+    error_message = "Availability type must be 'REGIONAL' or 'ZONAL'"
+  }
+}
+
+variable "cloudsql_edition" {
+  description = "The edition of the database instance - must be 'ENTERPRISE' or 'ENTERPRISE_PLUS'"
+  type        = string
+  default     = "ENTERPRISE"
+
+  validation {
+    condition     = contains(["ENTERPRISE", "ENTERPRISE_PLUS"], var.cloudsql_edition)
+    error_message = "Edition must be 'ENTERPRISE' or 'ENTERPRISE_PLUS'"
+  }
+}
+
+variable "metadata_database_name" {
+  description = "The database name to use for Bufstream"
+  type        = string
+  default     = "bufstream"
+}
