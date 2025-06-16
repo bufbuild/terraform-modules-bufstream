@@ -6,19 +6,30 @@ bufstream:
   serviceAccount:
     annotations:
       iam.gke.io/gcp-service-account: ${bufstream_service_account_email}
+  %{~ if ip_address != "" ~}
   service:
-    %{~ if ip_address != "" ~}
     type: LoadBalancer
     loadBalancerIP: ${ip_address}
     annotations:
       networking.gke.io/load-balancer-type: "Internal"
-    %{~ endif ~}
+  %{~ endif ~}
 metadata:
+%{ if metadata == "etcd" ~}
   use: etcd
   etcd:
     addresses:
     - host: "bufstream-etcd.bufstream.svc.cluster.local"
       port: 2379
+%{ endif ~}
+%{ if metadata == "postgres" }
+  use: postgres
+  postgres:
+    dsn: user=${db_user} database=${db_name}
+    cloudsql:
+      instance: ${project_id}:${region}:${sql_instance_name}
+      iam: true
+      privateIP: true
+%{ endif ~}
 %{ if ip_address != "" ~}
 kafka:
   publicAddress:

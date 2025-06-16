@@ -26,6 +26,10 @@ For AWS with Postgres:
 * [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 * [jq](https://jqlang.org/download/)
 
+For GCP with Postgres:
+
+* [gcloud cli](https://cloud.google.com/sdk/docs/install)
+
 Note that you'll also need to include a provider under the folder of the desired cloud.
 
 Required environment variables:
@@ -39,7 +43,7 @@ Required environment variables:
 | BUFSTREAM_METADATA  | Which database to use for metadata storage. Must be `etcd` or `postgres` |
 
 > [!WARNING]
-> Postgres is only supported in AWS at this time.
+> Postgres is only supported in AWS and GCP at this time.
 
 Example of running the install script, you will need to replace the `<latest-version>` string with the version of Bufstream you are planning to deploy:
 
@@ -90,6 +94,8 @@ Recommended variables in `tfvars`:
 By default, the module creates all resources necessary to deploy a Kubernetes cluster to the desired project.
 It also creates some specific resources required for Bufstream: a storage bucket and a role that the service
 account can assume to access the bucket.
+
+If Postgres is selected for metadata store, a CloudSQL instance is also created.
 
 Required variables in `tfvars`:
 

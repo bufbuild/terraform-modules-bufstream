@@ -3,33 +3,41 @@ locals {
   container_api_ref         = var.enable_apis ? google_project_service.apis["container.googleapis.com"] : data.google_project_service.apis["container.googleapis.com"]
   servicenetworking_api_ref = var.enable_apis ? google_project_service.apis["servicenetworking.googleapis.com"] : data.google_project_service.apis["servicenetworking.googleapis.com"]
   storage_api_ref           = var.enable_apis ? google_project_service.apis["storage.googleapis.com"] : data.google_project_service.apis["storage.googleapis.com"]
-}
+  sql_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["sqladmin.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["sqladmin.googleapis.com"] : null)
+  iam_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["iam.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["iam.googleapis.com"] : null)
 
-resource "google_project_service" "apis" {
-  for_each = var.enable_apis ? toset([
+
+
+  create_pg = var.bufstream_metadata == "postgres"
+
+  base_apis = [
     "compute.googleapis.com",
     "container.googleapis.com",
     "servicenetworking.googleapis.com",
     "storage.googleapis.com",
-  ]) : []
+  ]
 
-  project = var.project_id
-  service = each.value
+  sql_apis = local.create_pg ? [
+    "sqladmin.googleapis.com",
+    "iam.googleapis.com"
+  ] : []
+
+  apis = toset(concat(local.base_apis, local.sql_apis))
+}
+
+resource "google_project_service" "apis" {
+  for_each = var.enable_apis ? local.apis : []
+  project  = var.project_id
+  service  = each.value
 
   disable_dependent_services = true
   disable_on_destroy         = true
 }
 
 data "google_project_service" "apis" {
-  for_each = var.enable_apis ? [] : toset([
-    "compute.googleapis.com",
-    "container.googleapis.com",
-    "servicenetworking.googleapis.com",
-    "storage.googleapis.com",
-  ])
-
-  project = var.project_id
-  service = each.value
+  for_each = var.enable_apis ? [] : local.apis
+  project  = var.project_id
+  service  = each.value
 }
 
 module "network" {
@@ -98,6 +106,36 @@ module "storage" {
   ]
 }
 
+module "postgres" {
+  count = local.create_pg ? 1 : 0
+
+  source = "./metadata/postgres"
+
+  vpc_id                     = module.network.vpc_id
+  region                     = var.region
+  project_id                 = var.project_id
+  instance_name              = var.instance_name
+  database_version           = var.database_version
+  database_name              = var.metadata_database_name
+  cloudsql_tier              = var.cloudsql_tier
+  cloudsql_disk_size         = var.cloudsql_disk_size
+  cloudsql_availability_type = var.cloudsql_availability_type
+  cloudsql_edition           = var.cloudsql_edition
+  service_account            = module.kubernetes.bufstream_service_account
+
+  depends_on = [
+    local.sql_api_ref,
+    local.iam_api_ref,
+    module.network.private_service_network
+  ]
+}
+
+
+locals {
+  pg_service_account = ""
+  setup_pg           = var.generate_config_files_path != null && local.create_pg
+}
+
 # We always create the IP address (instead of gating it conditionally on `create_internal_lb`,
 # since if you ever flip the toggle back to destroy the internal LB, TF tries to destroy the IP
 # address before modifying the bufstream release, which yields a failure since bufstream still
@@ -116,10 +154,18 @@ resource "google_compute_address" "ip" {
 data "google_client_openid_userinfo" "user" {}
 
 locals {
+  sql_username = trimsuffix(module.kubernetes.bufstream_service_account, ".gserviceaccount.com")
+
   bufstream_values = templatefile("${path.module}/bufstream.yaml.tpl", {
     bucket_name                     = module.storage.bucket_ref
     bufstream_service_account_email = module.kubernetes.bufstream_service_account
     ip_address                      = var.create_internal_lb ? google_compute_address.ip.address : ""
+    region                          = local.setup_pg ? var.region : ""
+    metadata                        = var.bufstream_metadata
+    sql_instance_name               = local.setup_pg ? module.postgres[0].cloudsql_instance_name : ""
+    db_name                         = local.setup_pg ? module.postgres[0].database_name : ""
+    db_user                         = local.sql_username
+    project_id                      = local.setup_pg ? var.project_id : ""
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {
@@ -131,6 +177,24 @@ locals {
 
     impersonate_account = strcontains(data.google_client_openid_userinfo.user.email, "gserviceaccount") ? data.google_client_openid_userinfo.user.email : null
   })
+
+  pg_secret = local.setup_pg ? templatefile("${path.module}/pg-setup.sh.tpl", {
+    project_id      = var.project_id,
+    instance_name   = module.postgres[0].cloudsql_instance_name
+    db_name         = module.postgres[0].database_name
+    db_user         = local.sql_username
+    service_account = module.postgres[0].cloudsql_service_account
+    bucket          = module.storage.bucket_ref
+    project_id      = var.project_id
+  }) : null
+}
+
+resource "local_file" "pg_setup_script" {
+  count    = local.setup_pg ? 1 : 0
+  content  = local.pg_secret
+  filename = "${var.generate_config_files_path}/gcp-pg-setup.sh"
+
+  file_permission = "0700"
 }
 
 resource "local_file" "bufstream_values" {
