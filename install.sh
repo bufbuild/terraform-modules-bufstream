@@ -3,11 +3,6 @@
 set -x
 set -eo pipefail
 
-if [[ "${BUFSTREAM_KEYFILE}" == "" ]] ; then
-  echo "\$BUFSTREAM_KEYFILE must be defined pointing to the base64 encoding of the key to bufstream's chart private registry."
-  exit 1
-fi
-
 if [[ "${BUFSTREAM_VERSION}" == "" ]] ; then
   echo "\$BUFSTREAM_VERSION must be defined to the desired bufstream version."
   exit 1
@@ -40,14 +35,9 @@ case "${BUFSTREAM_METADATA}" in
   ;;
 esac
 
-BUFSTREAM_KEYFILE=$(realpath "${BUFSTREAM_KEYFILE}")
 BUFSTREAM_TFVARS=$(realpath "${BUFSTREAM_TFVARS}")
 
 CONFIG_GEN_PATH=$PWD/gen
-
-echo "Authenticating Helm Chart..."
-cat "${BUFSTREAM_KEYFILE}" | helm registry login -u _json_key_base64 --password-stdin \
-  https://us-docker.pkg.dev/buf-images-1/bufstream
 
 pushd "${BUFSTREAM_CLOUD}"
 
@@ -104,7 +94,7 @@ echo "Installing Bufstream..."
 helm \
   --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
   upgrade bufstream --install \
-  oci://us-docker.pkg.dev/buf-images-1/bufstream/charts/bufstream \
+  oci://us-docker.pkg.dev/buf-images-1/buf/charts/bufstream \
   --version "${BUFSTREAM_VERSION}" \
   --namespace "${BUFSTREAM_NAMESPACE:-bufstream}" \
   --values "${CONFIG_GEN_PATH}/bufstream.yaml" \
