@@ -20,15 +20,7 @@ fi
 
 case "${BUFSTREAM_METADATA}" in
 "postgres" | "etcd")
-  if [[ "${BUFSTREAM_METADATA}" == "postgres" ]]; then
-    case "${BUFSTREAM_CLOUD}" in
-      "azure")
-        echo "Postgres is only supported in aws and gcp at this time"
-        exit 1
-    esac
-  fi
-  ;;
-
+;;
 *)
   echo "\$BUFSTREAM_METADATA must be defined to 'postgres' or 'etcd'"
   exit 1
