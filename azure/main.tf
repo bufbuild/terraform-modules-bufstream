@@ -1,30 +1,6 @@
 locals {
-  rg_ref = var.resource_group_create ? azurerm_resource_group.rg[0].id : data.azurerm_resource_group.rg[0].id
-}
-
-resource "azurerm_resource_provider_registration" "registrations" {
-  for_each = {
-    "Microsoft.Network" = {
-      // Allow deploying V2 application gateways with only a private IP
-      // https://learn.microsoft.com/en-us/azure/application-gateway/application-gateway-private-deployment
-      features = {
-        "EnableApplicationGatewayNetworkIsolation" : true,
-      }
-    },
-    "Microsoft.ContainerService" = {features = {}},
-    "Microsoft.Storage" = {features = {}},
-  }
-
-  name = each.key
-
-  dynamic "feature" {
-    for_each = each.value.features
-
-    content {
-      name       = feature.key
-      registered = feature.value
-    }
-  }
+  rg_ref  = var.resource_group_create ? azurerm_resource_group.rg[0].id : data.azurerm_resource_group.rg[0].id
+  rg_name = var.resource_group_create ? azurerm_resource_group.rg[0].name : data.azurerm_resource_group.rg[0].name
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -40,12 +16,33 @@ data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
+locals {
+  pg_create = var.bufstream_metadata == "postgres"
+}
+
+module "metadata" {
+  count  = local.pg_create ? 1 : 0
+  source = "./metadata/postgres"
+
+  instance_name     = var.instance_name
+  pg_version        = var.pg_version
+  pg_admin_username = var.pg_admin_username
+  pg_sku_name       = var.pg_sku_name
+  pg_storage_mb     = var.pg_storage_mb
+  pg_subnet_cidr    = var.pg_subnet_cidr
+  resource_group    = local.rg_name
+  location          = var.location
+  vpc_name          = module.network.vpc_name
+
+  depends_on = [module.network]
+}
+
 module "network" {
   source = "./network"
 
   vpc_create          = var.vpc_create
   vpc_name            = var.vpc_name
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.rg_name
   location            = var.location
 
   address_space = [var.vpc_cidr]
@@ -56,19 +53,15 @@ module "network" {
   pods_subnet_create    = var.pods_subnet_create
   pods_subnet_name      = var.pods_subnet_name
   pods_subnet_cidr      = var.pods_subnet_cidr
-
-  depends_on = [
-    azurerm_resource_provider_registration.registrations,
-  ]
 }
 
 module "kubernetes" {
   source = "./kubernetes"
 
-  resource_group_name = var.resource_group_name
+  resource_group_name = local.rg_name
   location            = var.location
 
-  kubernetes_version     = var.kubernetes_version
+  kubernetes_version = var.kubernetes_version
 
   cluster_create = var.cluster_create
   cluster_name   = var.cluster_name
@@ -87,21 +80,17 @@ module "kubernetes" {
   wif_create                        = var.wif_create
   wif_bufstream_k8s_namespace       = var.bufstream_k8s_namespace
   wif_bufstream_k8s_service_account = var.wif_bufstream_k8s_service_account
-
-  depends_on = [
-    azurerm_resource_provider_registration.registrations,
-  ]
 }
 
 module "storage" {
   source = "./storage"
 
-  storage_account_create = var.storage_account_create
+  storage_account_create   = var.storage_account_create
   storage_container_create = var.storage_container_create
 
   storage_account_name   = var.storage_account_name
   storage_container_name = var.storage_container_name
-  resource_group_name    = var.resource_group_name
+  resource_group_name    = local.rg_name
   location               = var.location
 
   storage_kind             = var.storage_kind
@@ -111,10 +100,6 @@ module "storage" {
   storage_large_file_share_enabled = var.storage_large_file_share_enabled
 
   bufstream_identity = module.kubernetes.bufstream_identity.principal_id
-
-  depends_on = [
-    azurerm_resource_provider_registration.registrations,
-  ]
 }
 
 locals {
@@ -123,10 +108,11 @@ locals {
     container_name     = module.storage.storage_container_name
     bufstream_identity = module.kubernetes.bufstream_identity.client_id
     ip_address         = var.internal_lb_address
+    metadata           = var.bufstream_metadata
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {
-    resource_group_name = var.resource_group_name
+    resource_group_name = local.rg_name
     cluster_name        = module.kubernetes.cluster_name
     cluster_host        = module.kubernetes.endpoint
     cluster_certificate = module.kubernetes.cert
@@ -136,6 +122,21 @@ locals {
     client_cert    = module.kubernetes.client_cert
     client_key     = module.kubernetes.client_key
   })
+
+  pgsecret = local.pg_create ? templatefile("${path.module}/pg-setup.sh.tpl", {
+    server_name    = module.metadata[0].server_name
+    resource_group = local.rg_name
+    db_username    = module.metadata[0].db_username
+    pg_endpoint    = module.metadata[0].pg_endpoint
+    db_name        = module.metadata[0].db_name
+  }) : null
+}
+
+resource "local_file" "pg_setup_script" {
+  count           = var.generate_config_files_path != null && local.pg_create ? 1 : 0
+  content         = local.pgsecret
+  filename        = "${var.generate_config_files_path}/azure-pg-setup.sh"
+  file_permission = "0700"
 }
 
 resource "local_file" "bufstream_values" {
