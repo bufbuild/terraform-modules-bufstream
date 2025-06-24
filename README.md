@@ -30,6 +30,11 @@ For GCP with Postgres:
 
 * [gcloud cli](https://cloud.google.com/sdk/docs/install)
 
+For Azure with Postgres:
+
+* [az cli](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+* [Azure Kubelogin](https://azure.github.io/kubelogin/install.html)
+
 Note that you'll also need to include a provider under the folder of the desired cloud.
 
 Required environment variables:
@@ -40,9 +45,6 @@ Required environment variables:
 | BUFSTREAM_CLOUD     | Which cloud to deploy to. Must be `aws` or `gcp`                         |
 | BUFSTREAM_TFVARS    | Path to the `tfvars` file                                                |
 | BUFSTREAM_METADATA  | Which database to use for metadata storage. Must be `etcd` or `postgres` |
-
-> [!WARNING]
-> Postgres is only supported in AWS and GCP at this time.
 
 Example of running the install script, you will need to replace the `<latest-version>` string with the version of Bufstream you are planning to deploy:
 
@@ -114,6 +116,8 @@ Recommended variables in `tfvars`:
 By default, the module creates all resources necessary to deploy a Kubernetes cluster to the desired project.
 It also creates some specific resources required for Bufstream: a storage account and container, a virtual network
 and required subnets, and the bufstream identity with its required role assignment to access storage.
+
+If Postgres is selected for the metadata store, a Postgres Flexible Server is also created.
 
 Required variables in `tfvars`:
 
