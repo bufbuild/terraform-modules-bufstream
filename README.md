@@ -97,6 +97,8 @@ account can assume to access the bucket.
 
 If Postgres is selected for metadata store, a CloudSQL instance is also created.
 
+If Spanner is selected for metadata store, a Spanner instance is also created.
+
 Required variables in `tfvars`:
 
 | Variable    | Description                                        |

@@ -21,7 +21,14 @@ metadata:
     - host: "bufstream-etcd.bufstream.svc.cluster.local"
       port: 2379
 %{ endif ~}
-%{ if metadata == "postgres" }
+%{ if metadata == "spanner" ~}
+  use: spanner
+  spanner:
+    projectId: ${project_id}
+    instanceId: ${spanner_instance_id}
+    database_name: bufstream
+%{ endif ~}
+%{ if metadata == "postgres" ~}
   use: postgres
   postgres:
     dsn: user=${db_user} database=${db_name}
