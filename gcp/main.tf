@@ -5,10 +5,12 @@ locals {
   storage_api_ref           = var.enable_apis ? google_project_service.apis["storage.googleapis.com"] : data.google_project_service.apis["storage.googleapis.com"]
   sql_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["sqladmin.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["sqladmin.googleapis.com"] : null)
   iam_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["iam.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["iam.googleapis.com"] : null)
+  spanner_api_ref           = var.enable_apis ? (local.create_spanner ? google_project_service.apis["spanner.googleapis.com"] : null) : (local.create_spanner ? data.google_project_service.apis["spanner.googleapis.com"] : null)
 
 
 
-  create_pg = var.bufstream_metadata == "postgres"
+  create_pg      = var.bufstream_metadata == "postgres"
+  create_spanner = var.bufstream_metadata == "spanner"
 
   base_apis = [
     "compute.googleapis.com",
@@ -22,7 +24,14 @@ locals {
     "iam.googleapis.com"
   ] : []
 
-  apis = toset(concat(local.base_apis, local.sql_apis))
+  spanner_apis = local.create_spanner ? [
+    "spanner.googleapis.com",
+    "iam.googleapis.com"
+  ] : []
+
+  apis = toset(concat(local.base_apis, local.sql_apis, local.spanner_apis))
+
+  spanner_config = var.spanner_config != null ? var.spanner_config : "regional-${var.region}"
 }
 
 resource "google_project_service" "apis" {
@@ -106,6 +115,24 @@ module "storage" {
   ]
 }
 
+module "spanner" {
+  count = local.create_spanner ? 1 : 0
+
+  source = "./metadata/spanner"
+
+  instance_name        = var.spanner_instance_name
+  spanner_config       = local.spanner_config
+  project_id           = var.project_id
+  user_service_account = module.kubernetes.bufstream_service_account
+  display_name         = var.spanner_display_name
+  num_nodes            = var.spanner_num_nodes
+
+  depends_on = [
+    local.spanner_api_ref,
+    local.iam_api_ref
+  ]
+}
+
 module "postgres" {
   count = local.create_pg ? 1 : 0
 
@@ -132,8 +159,8 @@ module "postgres" {
 
 
 locals {
-  pg_service_account = ""
-  setup_pg           = var.generate_config_files_path != null && local.create_pg
+  setup_pg      = var.generate_config_files_path != null && local.create_pg
+  setup_spanner = var.generate_config_files_path != null && local.create_spanner
 }
 
 # We always create the IP address (instead of gating it conditionally on `create_internal_lb`,
@@ -163,9 +190,10 @@ locals {
     region                          = local.setup_pg ? var.region : ""
     metadata                        = var.bufstream_metadata
     sql_instance_name               = local.setup_pg ? module.postgres[0].cloudsql_instance_name : ""
+    spanner_instance_id             = local.setup_spanner ? module.spanner[0].spanner_instance_name : ""
     db_name                         = local.setup_pg ? module.postgres[0].database_name : ""
     db_user                         = local.sql_username
-    project_id                      = local.setup_pg ? var.project_id : ""
+    project_id                      = local.setup_pg || local.setup_spanner ? var.project_id : ""
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {
@@ -185,7 +213,6 @@ locals {
     db_user         = local.sql_username
     service_account = module.postgres[0].cloudsql_service_account
     bucket          = module.storage.bucket_ref
-    project_id      = var.project_id
   }) : null
 }
 

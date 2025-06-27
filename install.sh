@@ -20,9 +20,15 @@ fi
 
 case "${BUFSTREAM_METADATA}" in
 "postgres" | "etcd")
-;;
+  ;;
+"spanner")
+  if [[ "$BUFSTREAM_CLOUD" != "gcp" ]] ; then
+    echo "'spanner' is only available in gcp"
+    exit 1
+  fi
+  ;;
 *)
-  echo "\$BUFSTREAM_METADATA must be defined to 'postgres' or 'etcd'"
+  echo "\$BUFSTREAM_METADATA must be defined to 'postgres' or 'etcd'. For gcp, 'spanner' is also available"
   exit 1
   ;;
 esac

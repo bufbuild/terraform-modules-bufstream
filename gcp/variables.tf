@@ -152,9 +152,9 @@ variable "bufstream_metadata" {
   type        = string
 
   validation {
-    condition = contains(["postgres", "etcd"], var.bufstream_metadata)
+    condition = contains(["postgres", "etcd", "spanner"], var.bufstream_metadata)
 
-    error_message = "must be either 'postgres' or 'etcd'"
+    error_message = "must be one of 'postgres', 'spanner', or 'etcd'"
   }
 }
 
@@ -213,4 +213,30 @@ variable "metadata_database_name" {
   description = "The database name to use for Bufstream"
   type        = string
   default     = "bufstream"
+}
+
+# Spanner
+
+variable "spanner_instance_name" {
+  description = "Name of the Spanner instance"
+  type        = string
+  default     = null
+}
+
+variable "spanner_config" {
+  description = "The Spanner configuration to use"
+  type        = string
+  default     = null
+}
+
+variable "spanner_display_name" {
+  description = "The display name for the Spanner instance."
+  type        = string
+  default     = "Bufstream Spanner Instance"
+}
+
+variable "spanner_num_nodes" {
+  description = "The number of nodes allocated to the Spanner instance"
+  type        = number
+  default     = 1
 }
