@@ -19,6 +19,7 @@
 | <a name="module_kubernetes"></a> [kubernetes](#module\_kubernetes) | ./kubernetes | n/a |
 | <a name="module_network"></a> [network](#module\_network) | ./network | n/a |
 | <a name="module_postgres"></a> [postgres](#module\_postgres) | ./metadata/postgres | n/a |
+| <a name="module_spanner"></a> [spanner](#module\_spanner) | ./metadata/spanner | n/a |
 | <a name="module_storage"></a> [storage](#module\_storage) | ./storage | n/a |
 
 ## Resources
@@ -62,6 +63,10 @@
 | <a name="input_region"></a> [region](#input\_region) | Region where to create resources in. | `string` | n/a | yes |
 | <a name="input_service_account_create"></a> [service\_account\_create](#input\_service\_account\_create) | Whether to create a GCP bufstream service account or use an existing one. | `bool` | `true` | no |
 | <a name="input_service_account_name"></a> [service\_account\_name](#input\_service\_account\_name) | Name of service account to create or use. | `string` | `"bufstream"` | no |
+| <a name="input_spanner_config"></a> [spanner\_config](#input\_spanner\_config) | The Spanner configuration to use | `string` | `null` | no |
+| <a name="input_spanner_display_name"></a> [spanner\_display\_name](#input\_spanner\_display\_name) | The display name for the Spanner instance. | `string` | `"Bufstream Spanner Instance"` | no |
+| <a name="input_spanner_instance_name"></a> [spanner\_instance\_name](#input\_spanner\_instance\_name) | Name of the Spanner instance | `string` | `null` | no |
+| <a name="input_spanner_num_nodes"></a> [spanner\_num\_nodes](#input\_spanner\_num\_nodes) | The number of nodes allocated to the Spanner instance | `number` | `1` | no |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR of new subnet to create in case of creation. | `string` | `"10.20.0.0/23"` | no |
 | <a name="input_subnet_create"></a> [subnet\_create](#input\_subnet\_create) | Whether to create a new subnet in the VPC referenced above. | `bool` | `true` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | Name of new subnet to create or use. | `string` | `"bufstream-subnet-1"` | no |
