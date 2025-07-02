@@ -5,10 +5,6 @@ resource "random_string" "instance_name" {
   upper   = false
 }
 
-data "google_service_account" "bufstream_sa" {
-  account_id = var.service_account
-}
-
 locals {
   instance_name = var.instance_name != null ? var.instance_name : random_string.instance_name.result
 }
@@ -17,13 +13,13 @@ locals {
 resource "google_project_iam_member" "cloudsql_client_role" {
   project = var.project_id
   role    = "roles/cloudsql.client"
-  member  = data.google_service_account.bufstream_sa.member
+  member  = "serviceAccount:${var.service_account}"
 }
 
 resource "google_project_iam_member" "cloudsql_instance_user_role" {
   project = var.project_id
   role    = "roles/cloudsql.instanceUser"
-  member  = data.google_service_account.bufstream_sa.member
+  member  = "serviceAccount:${var.service_account}"
 }
 
 resource "google_sql_database_instance" "bufpg" {
@@ -57,4 +53,3 @@ resource "google_sql_database" "bufdb" {
   project  = var.project_id
   instance = google_sql_database_instance.bufpg.name
 }
-

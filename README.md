@@ -39,12 +39,13 @@ Note that you'll also need to include a provider under the folder of the desired
 
 Required environment variables:
 
-| Variable            | Description                                                              |
-| -----------------   | ------------------------------------------------------------------------ |
-| BUFSTREAM_VERSION   | The version of Bufstream to deploy                                       |
-| BUFSTREAM_CLOUD     | Which cloud to deploy to. Must be `aws` or `gcp`                         |
-| BUFSTREAM_TFVARS    | Path to the `tfvars` file                                                |
-| BUFSTREAM_METADATA  | Which database to use for metadata storage. Must be `etcd` or `postgres` |
+| Variable            | Description                                                                 |
+| -----------------   | --------------------------------------------------------------------------- |
+| BUFSTREAM_VERSION   | The version of Bufstream to deploy                                          |
+| BUFSTREAM_CLOUD     | Which cloud to deploy to. Must be `aws` or `gcp`                            |
+| BUFSTREAM_TFVARS    | Path to the `tfvars` file                                                   |
+| BUFSTREAM_METADATA  | Which database to use for metadata storage. Must be `etcd` or `postgres`    |
+| BUFSTREAM_NAMESPACE | Namespace for bufstream. Required ONLY if not usig the `bufstream` default. |
 
 Example of running the install script, you will need to replace the `<latest-version>` string with the version of Bufstream you are planning to deploy:
 

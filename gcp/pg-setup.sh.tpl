@@ -19,13 +19,14 @@ gcloud sql users create ${db_user} \
   --project=${project_id} \
   --instance=${instance_name} \
   --type=cloud_iam_service_account
-  
+
 gcloud storage cp \
   "$sqlfilepath" \
   "gs://${bucket}/$sqlfile" \
   --quiet
-  
+
 gcloud sql import sql \
+  --project=${project_id} \
   "${instance_name}" \
   "gs://${bucket}/$sqlfile" \
   --database ${db_name} \
