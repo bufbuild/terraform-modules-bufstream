@@ -1,7 +1,5 @@
 name: TF/Shell Linters
-  pull-requests: read
 on:
-  workflow_call:
   pull_request:
     types:
       - opened
