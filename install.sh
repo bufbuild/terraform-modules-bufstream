@@ -26,7 +26,6 @@ set -eo pipefail
 
 if [[ "${BUFSTREAM_VERSION}" == "" ]] ; then
   echo "\$BUFSTREAM_VERSION must be defined to the desired bufstream version."
-  echo $BUFSTREAM_VERSION
   exit 1
 fi
 
