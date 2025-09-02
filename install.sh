@@ -87,7 +87,7 @@ if [[ "$1" == "cleanup" ]] ; then
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}" \
   -auto-approve
   if [[ "$BUFSTREAM_CLOUD" == "gcp" || "$BUFSTREAM_CLOUD" == "aws" ]]; then
-    printf "warning - the bucket created by this script has to be deleted manually. it will begin emptying its contents soon. you can manually delete it at any time."
+    printf "Warning - the bucket created by this script has to be deleted manually. this script has configured it with a lifecycle deletion policy to begin cleaning up data in the next 24 hours. you can manually delete it at any time."
   fi
   exit 0
 fi
@@ -147,6 +147,3 @@ helm \
   --values "${CONFIG_GEN_PATH}/bufstream.yaml" \
   --wait
 popd
-
-
-
