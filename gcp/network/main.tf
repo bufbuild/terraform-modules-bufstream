@@ -70,4 +70,5 @@ resource "google_service_networking_connection" "private_service_networking" {
   reserved_peering_ranges = [
     google_compute_global_address.google_managed_services[0].name,
   ]
+  deletion_policy = "ABANDON"
 }

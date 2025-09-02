@@ -124,9 +124,10 @@ If Postgres is selected for the metadata store, a Postgres Flexible Server is al
 
 Required variables in `tfvars`:
 
-| Variable | Description                                                                           |
-| -------- | ------------------------------------------------------------------------------------- |
-| location | Where to deploy the resources. A region that supports availability zones is required. |
+| Variable | Description                                                                                    |
+| -------- | -----------------------------------------------------------------------------------------------|
+| location          | Where to deploy the resources. A region that supports availability zones is required. |
+| subscription_id   | Unique identifier of Azure subscription to deploy resources in.                       |
 
 Recommended variables in `tfvars`:
 
