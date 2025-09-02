@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Lint Terraform
         uses: hashicorp/terraform:1.5.7
-        with:
+        run: |
           terraform fmt -recursive
       
   lint-shell:
@@ -20,5 +20,5 @@ jobs:
     steps:
       - name: Lint title
         uses: koalaman/shellcheck:0.11.0
-        with:
+        run: |
           find . -name "*.sh" -print0 | xargs -0 shellcheck --severity=style
