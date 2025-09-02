@@ -1,15 +1,37 @@
 #!/bin/bash
 
+### ###
+function clean_up_gcp {
+  BUCKET_DATA=$(gcloud storage buckets list --format json)
+  BUCKET_NAME=$(echo $BUCKET_DATA | jq -r '.[].name')
+  BUCKET_LCP=$(echo $BUCKET_DATA | jq -r '.[].lifecycle_config')
+  if [[ "${BUCKET_LCP}" = "null" && -n "${BUCKET_NAME}" ]]; then
+    echo '{"lifecycle": {"rule": [{"action": {"type": "Delete"},"condition": {"age": 0}}]}}' > ${CONFIG_GEN_PATH}/lifecycle.json
+    gcloud storage buckets update gs://$BUCKET_NAME --lifecycle-file ${CONFIG_GEN_PATH}/lifecycle.json
+    terraform state rm module.storage.google_storage_bucket.bufstream[0]
+  fi
+}
+
+function clean_up_aws {
+  BUCKET_NAME=$(terraform show -json | jq -r '.values.root_module.child_modules.[]?.resources.[]? | select (.type == "aws_s3_bucket") | .values.bucket')
+  if [[ -n "${BUCKET_NAME}" ]]; then
+    echo '{"Rules": [{"ID": "CleanUpExpirationPolicy", "Status": "Enabled", "Prefix": "*", "Expiration": {"Days": 1}}]}' > ${CONFIG_GEN_PATH}/lifecycle.json
+    aws s3api put-bucket-lifecycle-configuration --bucket $BUCKET_NAME --lifecycle-configuration file://${CONFIG_GEN_PATH}/lifecycle.json > /dev/null #but what if it fails?
+    terraform state rm module.storage.aws_s3_bucket.bufstream[0]
+  fi
+}
+
 set -x
 set -eo pipefail
 
 if [[ "${BUFSTREAM_VERSION}" == "" ]] ; then
   echo "\$BUFSTREAM_VERSION must be defined to the desired bufstream version."
+  echo $BUFSTREAM_VERSION
   exit 1
 fi
 
 if [[ "${BUFSTREAM_CLOUD}" == "" ]] ; then
-  echo "\$BUFSTREAM_CLOUD must be defined to `gcp` or `aws`."
+  echo "\$BUFSTREAM_CLOUD must be defined to `gcp`, `aws` or `azure`."
   exit 1
 fi
 
@@ -39,14 +61,42 @@ CONFIG_GEN_PATH=$PWD/gen
 
 pushd "${BUFSTREAM_CLOUD}"
 
-echo "Applying Terraform..."
- TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+echo "Initializing Terraform..."
+  TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
   TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \
   terraform init \
   --var-file "${BUFSTREAM_TFVARS}" \
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
 
- TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+if [[ "$1" == "cleanup" ]] ; then
+  read -p "cleanup will destroy all resources. are you sure? type y/yes to continue: " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+  echo "Cleaning up Terraform..."
+  case ${BUFSTREAM_CLOUD} in
+    gcp)
+      echo "gcp"
+      clean_up_gcp
+      ;;
+    aws)
+      echo "aws"
+      clean_up_aws
+      ;;
+  esac
+  TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
+  TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \
+  terraform destroy \
+  --var-file "${BUFSTREAM_TFVARS}" \
+  --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}" \
+  -auto-approve
+  if [[ "$BUFSTREAM_CLOUD" == "gcp" || "$BUFSTREAM_CLOUD" == "aws" ]]; then
+    printf "warning - the bucket created by this script has to be deleted manually. it will begin emptying its contents soon. you can manually delete it at any time."
+  fi
+  exit 0
+fi
+
+
+
+echo "Applying Terraform..."
+  TF_VAR_generate_config_files_path="${CONFIG_GEN_PATH}" \
   TF_VAR_bufstream_metadata="${BUFSTREAM_METADATA}" \
   terraform apply \
   --var-file "${BUFSTREAM_TFVARS}" \
@@ -98,3 +148,6 @@ helm \
   --values "${CONFIG_GEN_PATH}/bufstream.yaml" \
   --wait
 popd
+
+
+

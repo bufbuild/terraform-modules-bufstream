@@ -1,5 +1,5 @@
 locals {
-  storage_account_ref = var.storage_account_create ? azurerm_storage_account.bufstream[0] : data.azurerm_storage_account.bufstream[0]
+  storage_account_ref   = var.storage_account_create ? azurerm_storage_account.bufstream[0] : data.azurerm_storage_account.bufstream[0]
   storage_container_ref = var.storage_container_create ? azurerm_storage_container.bufstream[0] : data.azurerm_storage_container.bufstream[0]
 }
 

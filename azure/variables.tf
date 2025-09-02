@@ -286,3 +286,9 @@ variable "generate_config_files_path" {
   type        = string
   default     = null
 }
+
+variable "subscription_id" {
+  description = "Unique identifier of Azure subscription to deploy resources into"
+  type        = string
+  default     = null
+}

@@ -1,3 +1,7 @@
+provider "aws" {
+  region = var.region
+}
+
 module "network" {
   source             = "./network"
   create_vpc         = var.create_vpc
@@ -102,10 +106,10 @@ locals {
   })
 
   pg_secret = local.create_pg ? templatefile("${path.module}/pg-setup.sh.tpl", {
-    region              = var.region
-    secret_arn          = module.postgres[0].pg_pw_secret_arn
-    dsn                 = module.postgres[0].pg_dsn
-    aws_profile         = var.profile
+    region      = var.region
+    secret_arn  = module.postgres[0].pg_pw_secret_arn
+    dsn         = module.postgres[0].pg_dsn
+    aws_profile = var.profile
   }) : null
 }
 

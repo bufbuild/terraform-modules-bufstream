@@ -28,12 +28,13 @@ resource "google_sql_database_instance" "bufpg" {
   region           = var.region
   project          = var.project_id
 
+  deletion_protection = false # terraform deletes
   settings {
     tier                        = var.cloudsql_tier
     disk_size                   = var.cloudsql_disk_size
     edition                     = var.cloudsql_edition
     availability_type           = var.cloudsql_availability_type
-    deletion_protection_enabled = false
+    deletion_protection_enabled = false # API based deletes
 
 
     ip_configuration {
