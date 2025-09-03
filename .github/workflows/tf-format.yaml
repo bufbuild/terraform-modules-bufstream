@@ -58,7 +58,7 @@ jobs:
                 <summary> View diff here </summary>
 
                 ```
-                ${diffContent}
+                $diffContent
                 ```
               </details>
             `;
