@@ -35,7 +35,7 @@ jobs:
         run: |
           if [[ -s diff.log ]]; then
             error_message=$(cat diff.log | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/%0A/g')
-            echo "::error::Terraform formatting issues found. Run 'terraform fmt' to fix them.%0A%0A$error_message
+            echo "::error::Terraform formatting issues found. Run 'terraform fmt' to fix them.%0A%0A$error_message"
             exit 1
           else
             echo "TERRAFORM_DIFF=false" >> $GITHUB_ENV
