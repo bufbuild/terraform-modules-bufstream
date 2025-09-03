@@ -11,6 +11,11 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+      id-token: write
     name: Check Terraform file are formatted correctly
     steps:
       - name: Checkout
