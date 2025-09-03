@@ -5,41 +5,40 @@ on:
       - opened
       - edited
 jobs:
-  lint-terraform:
+  tflint:
   # from https://github.com/marketplace/actions/setup-tflint
     name: Lint TF
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-      name: Checkout source code
+      - uses: actions/checkout@v4
+        name: Checkout source code
 
-    - uses: actions/cache@v4
-      name: Cache plugin dir
-      with:
-        path: ~/.tflint.d/plugins
-        key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+      - uses: actions/cache@v4
+        name: Cache plugin dir
+        with:
+          path: ~/.tflint.d/plugins
+          key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
 
-    - uses: terraform-linters/setup-tflint@v4
-      name: Setup TFLint
-      with:
-        tflint_version: v0.52.0
-    - name: Show version
-      run: tflint --version
+      - uses: terraform-linters/setup-tflint@v4
+        name: Setup TFLint
+        with:
+          tflint_version: v0.52.0
+      - name: Show version
+        run: tflint --version
 
-    - name: Init TFLint
-      run: tflint --init
-      env:
-        # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
-        GITHUB_TOKEN: ${{ github.token }}
+      - name: Init TFLint
+        run: tflint --init
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ github.token }}
 
-    - name: Run TFLint
-      run: tflint -f compact
+      - name: Run TFLint
+        run: tflint -f compact
 
-  # lint-shell:
-  #   name: Lint Shell
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Lint title
-  #       uses: koalaman/shellcheck:0.11.0
-  #       run: |
-  #         find . -name "*.sh" -print0 | xargs -0 shellcheck --severity=style
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
