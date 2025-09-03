@@ -1,0 +1,42 @@
+name: Run Terraform fmt diff
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    name: Check Terraform file are formatted correctly
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: run terraform fmt diff
+        run: terraform fmt -diff -recursive -write=false > diff.txt
+
+      - name: check for empty diff
+        run: |
+          if [[ -s diff.txt ]]; then
+            echo "TERRAFORM_DIFF=true" >> $GITHUB_ENV
+          else
+            echo "TERRAFORM_DIFF=false" >> $GITHUB_ENV
+          fi
+
+      - name: post diff to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'This is a comment from my custom step. Yeehaw et-al'
+            })
