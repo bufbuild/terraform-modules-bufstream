@@ -115,12 +115,6 @@ variable "cluster_grant_admin" {
   default     = true
 }
 
-# variable "cluster_grant_actor" {
-#   description = "If cluster_grant_admin and this are set, grant cluster admin role to user with this email."
-#   type        = string
-#   default     = null
-# }
-
 variable "bufstream_identity_create" {
   description = "Whether to create a new Azure bufstream identity."
   type        = bool
@@ -206,12 +200,6 @@ variable "storage_large_file_share_enabled" {
   type        = bool
   default     = false
 }
-
-# variable "storage_grant_permissions" {
-#   description = "Whether to grant necessary permissions on the storage account for the bufstream identity."
-#   type        = string
-#   default     = true
-# }
 
 # Metadata/Postgres
 
