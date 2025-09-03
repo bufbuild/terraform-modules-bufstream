@@ -34,4 +34,5 @@ jobs:
             error_message=$(cat diff.log | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/%0A/g')
             echo "::error::Terraform formatting issues found. Run 'terraform fmt -recursive' to fix them.%0A%0A$error_message"
             exit 1
+          fi
 
