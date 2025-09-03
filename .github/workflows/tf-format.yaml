@@ -28,14 +28,14 @@ jobs:
         run: terraform fmt -diff -recursive -write=false
 
       - name: run terraform fmt diff
-        run: terraform fmt -diff -recursive -write=false > diff.txt
+        run: terraform fmt -diff -recursive -write=false | tee diff.log
 
       - name: check for empty diff
         id: diff_check
         run: |
-          if [[ -s diff.txt ]]; then
-            echo "::error file=diff.txt::formatting changes found"
-            echo $(cat diff.txt)
+          if [[ -s diff.log ]]; then
+            error_message=$(cat diff.log | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/%0A/g')
+            echo "::error::Terraform formatting issues found. Run 'terraform fmt' to fix them.%0A%0A$error_message
             exit 1
           else
             echo "TERRAFORM_DIFF=false" >> $GITHUB_ENV
