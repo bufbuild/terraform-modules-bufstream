@@ -31,6 +31,7 @@ jobs:
         run: terraform fmt -diff -recursive -write=false > diff.txt
 
       - name: check for empty diff
+        id: diff_check
         run: |
           if [[ -s diff.txt ]]; then
             cat diff.txt
@@ -47,7 +48,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const diffContent = `${{ steps.file_contents.outputs.DIFF_CONTENT }}`;
+            const diffContent = `${{ steps.diff_check.outputs.DIFF_CONTENT }}`;
             const commentBody = `
 
               CI detected formatting possibilities in the terraform files in this repo. 
