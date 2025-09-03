@@ -54,10 +54,13 @@ jobs:
               CI detected formatting possibilities in the terraform files in this repo. 
               Please review and adjust accordingly.
 
-              Diff:
-              \`\`\`
-              ${diffContent}
-              \`\`\`
+              <details>
+                <summary> View diff here </summary>
+
+                \`\`\`
+                ${diffContent}
+                \`\`\`
+              </details>
             `;
 
             github.rest.issues.createComment({
