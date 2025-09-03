@@ -267,18 +267,6 @@ variable "pg_subnet_cidr" {
   default     = "10.192.6.0/23"
 }
 
-# variable "db_name" {
-#   description = "Name of the Bufstream database for metadata store"
-#   type        = string
-#   default     = "bufstream"
-# }
-
-# variable "db_collation" {
-#   description = "Collation for the PostgreSQL database"
-#   type        = string
-#   default     = "en_US.utf8"
-# }
-
 # Config Gen
 
 variable "generate_config_files_path" {

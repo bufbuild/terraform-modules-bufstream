@@ -141,13 +141,6 @@ variable "postgres_username" {
   default     = "postgres"
 }
 
-# variable "postgres_password" {
-#   description = "Postgres password for RDS instance"
-#   type        = string
-#   default     = null
-#   sensitive   = true
-# }
-
 variable "rds_identifier" {
   description = "Identifier of the RDS instance"
   type        = string
