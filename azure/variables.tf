@@ -115,11 +115,11 @@ variable "cluster_grant_admin" {
   default     = true
 }
 
-variable "cluster_grant_actor" {
-  description = "If cluster_grant_admin and this are set, grant cluster admin role to user with this email."
-  type        = string
-  default     = null
-}
+# variable "cluster_grant_actor" {
+#   description = "If cluster_grant_admin and this are set, grant cluster admin role to user with this email."
+#   type        = string
+#   default     = null
+# }
 
 variable "bufstream_identity_create" {
   description = "Whether to create a new Azure bufstream identity."
@@ -207,11 +207,11 @@ variable "storage_large_file_share_enabled" {
   default     = false
 }
 
-variable "storage_grant_permissions" {
-  description = "Whether to grant necessary permissions on the storage account for the bufstream identity."
-  type        = string
-  default     = true
-}
+# variable "storage_grant_permissions" {
+#   description = "Whether to grant necessary permissions on the storage account for the bufstream identity."
+#   type        = string
+#   default     = true
+# }
 
 # Metadata/Postgres
 
@@ -267,17 +267,17 @@ variable "pg_subnet_cidr" {
   default     = "10.192.6.0/23"
 }
 
-variable "db_name" {
-  description = "Name of the Bufstream database for metadata store"
-  type        = string
-  default     = "bufstream"
-}
+# variable "db_name" {
+#   description = "Name of the Bufstream database for metadata store"
+#   type        = string
+#   default     = "bufstream"
+# }
 
-variable "db_collation" {
-  description = "Collation for the PostgreSQL database"
-  type        = string
-  default     = "en_US.utf8"
-}
+# variable "db_collation" {
+#   description = "Collation for the PostgreSQL database"
+#   type        = string
+#   default     = "en_US.utf8"
+# }
 
 # Config Gen
 
