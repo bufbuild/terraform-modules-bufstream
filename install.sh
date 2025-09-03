@@ -3,11 +3,11 @@
 ### ###
 function clean_up_gcp {
   BUCKET_DATA=$(gcloud storage buckets list --format json)
-  BUCKET_NAME=$(echo $BUCKET_DATA | jq -r '.[].name')
-  BUCKET_LCP=$(echo $BUCKET_DATA | jq -r '.[].lifecycle_config')
+  BUCKET_NAME=$(echo "$BUCKET_DATA" | jq -r '.[].name')
+  BUCKET_LCP=$(echo "$BUCKET_DATA" | jq -r '.[].lifecycle_config')
   if [[ "${BUCKET_LCP}" = "null" && -n "${BUCKET_NAME}" ]]; then
-    echo '{"lifecycle": {"rule": [{"action": {"type": "Delete"},"condition": {"age": 0}}]}}' > ${CONFIG_GEN_PATH}/lifecycle.json
-    gcloud storage buckets update gs://$BUCKET_NAME --lifecycle-file ${CONFIG_GEN_PATH}/lifecycle.json
+    echo '{"lifecycle": {"rule": [{"action": {"type": "Delete"},"condition": {"age": 0}}]}}' > "${CONFIG_GEN_PATH}/lifecycle.json"
+    gcloud storage buckets update "gs://${BUCKET_NAME}" --lifecycle-file "${CONFIG_GEN_PATH}/lifecycle.json"
     terraform state rm module.storage.google_storage_bucket.bufstream[0]
   fi
 }
@@ -15,8 +15,8 @@ function clean_up_gcp {
 function clean_up_aws {
   BUCKET_NAME=$(terraform show -json | jq -r '.values.root_module.child_modules.[]?.resources.[]? | select (.type == "aws_s3_bucket") | .values.bucket')
   if [[ -n "${BUCKET_NAME}" ]]; then
-    echo '{"Rules": [{"ID": "CleanUpExpirationPolicy", "Status": "Enabled", "Prefix": "*", "Expiration": {"Days": 1}}]}' > ${CONFIG_GEN_PATH}/lifecycle.json
-    aws s3api put-bucket-lifecycle-configuration --bucket $BUCKET_NAME --lifecycle-configuration file://${CONFIG_GEN_PATH}/lifecycle.json > /dev/null #but what if it fails?
+    echo '{"Rules": [{"ID": "CleanUpExpirationPolicy", "Status": "Enabled", "Prefix": "*", "Expiration": {"Days": 1}}]}' > "${CONFIG_GEN_PATH}/lifecycle.json"
+    aws s3api put-bucket-lifecycle-configuration --bucket "${BUCKET_NAME}" --lifecycle-configuration "file://${CONFIG_GEN_PATH}/lifecycle.json" > /dev/null #but what if it fails?
     terraform state rm module.storage.aws_s3_bucket.bufstream[0]
   fi
 }
@@ -30,7 +30,7 @@ if [[ "${BUFSTREAM_VERSION}" == "" ]] ; then
 fi
 
 if [[ "${BUFSTREAM_CLOUD}" == "" ]] ; then
-  echo "\$BUFSTREAM_CLOUD must be defined to `gcp`, `aws` or `azure`."
+  echo "\$BUFSTREAM_CLOUD must be defined to $(gcp),  $(aws) or $(azure)."
   exit 1
 fi
 
@@ -68,7 +68,7 @@ echo "Initializing Terraform..."
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
 
 if [[ "$1" == "cleanup" ]] ; then
-  read -p "cleanup will destroy all resources. are you sure? type y/yes to continue: " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+  read -p -r "cleanup will destroy all resources. are you sure? type y/yes to continue: " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
   echo "Cleaning up Terraform..."
   case ${BUFSTREAM_CLOUD} in
     gcp)

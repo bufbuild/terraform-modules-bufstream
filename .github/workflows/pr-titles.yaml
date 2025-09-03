@@ -1,0 +1,14 @@
+name: PR Title
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  pr-title:
+    uses: bufbuild/base-workflows/.github/workflows/pr-title.yaml@main
