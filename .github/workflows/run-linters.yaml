@@ -1,5 +1,8 @@
 name: TF/Shell Linters
 on:
+  push:
+    brainches:
+      - main
   pull_request:
     types:
       - opened
