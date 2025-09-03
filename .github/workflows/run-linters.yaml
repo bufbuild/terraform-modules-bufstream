@@ -4,6 +4,8 @@ on:
     types:
       - opened
       - edited
+      - reopened
+      - synchronize
 jobs:
   tflint:
   # from https://github.com/marketplace/actions/setup-tflint
