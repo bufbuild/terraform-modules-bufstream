@@ -25,11 +25,15 @@ jobs:
         uses: hashicorp/setup-terraform@v3
 
       - name: run terraform fmt diff
+        run: terraform fmt -diff -recursive -write=false
+
+      - name: run terraform fmt diff
         run: terraform fmt -diff -recursive -write=false > diff.txt
 
       - name: check for empty diff
         run: |
           if [[ -s diff.txt ]]; then
+            cat diff.txt
             echo "TERRAFORM_DIFF=true" >> $GITHUB_ENV
             echo "DIFF_CONTENT<<EOF" >> $GITHUB_OUTPUT
             cat diff.txt >> $GITHUB_OUTPUT
