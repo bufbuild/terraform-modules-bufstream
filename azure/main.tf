@@ -1,5 +1,5 @@
 locals {
-  rg_ref  = var.resource_group_create ? azurerm_resource_group.rg[0].id : data.azurerm_resource_group.rg[0].id
+  # rg_ref  = var.resource_group_create ? azurerm_resource_group.rg[0].id : data.azurerm_resource_group.rg[0].id
   rg_name = var.resource_group_create ? azurerm_resource_group.rg[0].name : data.azurerm_resource_group.rg[0].name
 }
 

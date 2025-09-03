@@ -1,0 +1,43 @@
+name: Run Terraform fmt diff
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+      id-token: write
+    name: Check Terraform file are formatted correctly
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: run terraform fmt diff
+        run: terraform fmt -diff -recursive -write=false
+
+      - name: run terraform fmt diff
+        run: terraform fmt -diff -recursive -write=false | tee diff.log
+
+      - name: check for empty diff
+        id: diff_check
+        run: |
+          if [[ -s diff.log ]]; then
+            error_message=$(cat diff.log | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n/%0A/g')
+            echo "::error::Terraform formatting issues found. Run 'terraform fmt' to fix them.%0A%0A$error_message"
+            exit 1
+          else
+            echo "TERRAFORM_DIFF=false" >> $GITHUB_ENV
+          fi
+
