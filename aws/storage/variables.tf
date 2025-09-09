@@ -13,3 +13,9 @@ variable "bufstream_role" {
   description = "Name of the IRSA role for bufstream."
   type        = string
 }
+
+variable "force_destroy" {
+  description = "Set force destroy on the bucket."
+  type        = string
+  default     = false
+}

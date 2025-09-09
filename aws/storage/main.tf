@@ -4,8 +4,9 @@ locals {
 }
 
 resource "aws_s3_bucket" "bufstream" {
-  count  = var.create_bucket ? 1 : 0
-  bucket = var.bucket_name
+  count         = var.create_bucket ? 1 : 0
+  bucket        = var.bucket_name
+  force_destroy = var.force_destroy
 }
 
 data "aws_s3_bucket" "bufstream" {
