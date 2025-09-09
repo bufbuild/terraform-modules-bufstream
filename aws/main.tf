@@ -68,9 +68,9 @@ resource "aws_security_group" "bufstream-nlb" {
 resource "aws_lb" "bufstream" {
   count              = var.create_nlb ? 1 : 0
   name               = "bufstream-app"
-  internal           = true
+  internal           = var.internal_only_nlb
   load_balancer_type = "network"
-  subnets            = module.network.private_subnet_ids
+  subnets            = var.internal_only_nlb ? module.network.private_subnet_ids : module.network.public_subnet_ids
   security_groups    = [aws_security_group.bufstream-nlb[0].id]
 
   tags = {
@@ -94,6 +94,7 @@ locals {
     hostname    = var.create_nlb ? aws_lb.bufstream[0].dns_name : ""
     role_arn    = var.use_pod_identity ? "" : module.kubernetes.bufstream_role_arn
     metadata    = var.bufstream_metadata
+    lb_scheme   = var.internal_only_nlb ? "internal" : "internet-facing"
   })
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {

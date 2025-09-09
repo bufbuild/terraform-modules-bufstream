@@ -176,3 +176,9 @@ variable "postgres_db_name" {
   type        = string
   default     = "bufstream"
 }
+
+variable "internal_only_nlb" {
+  description = "toggle public accessibility of nlb on/off"
+  type        = bool
+  default     = true
+}
