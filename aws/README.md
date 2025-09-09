@@ -69,4 +69,3 @@
 ## Outputs
 
 No outputs.
-internal_only_nlb
