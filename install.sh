@@ -68,7 +68,7 @@ echo "Initializing Terraform..."
   --var "bufstream_k8s_namespace=${BUFSTREAM_NAMESPACE:-bufstream}"
 
 if [[ "$1" == "cleanup" ]] ; then
-  read -p -r "cleanup will destroy all resources. are you sure? type y/yes to continue: " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+  read -r -p "cleanup will destroy all resources. are you sure? type y/yes to continue: " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
   echo "Cleaning up Terraform..."
   case ${BUFSTREAM_CLOUD} in
     gcp)

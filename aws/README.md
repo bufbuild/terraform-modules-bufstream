@@ -64,7 +64,9 @@
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS suggests a /19 but most will recommend a /16 to avoid IP exhaustion. https://docs.aws.amazon.com/eks/latest/best-practices/ip-opt.html#_mitigate_ip_exhaustion | `string` | `"10.64.0.0/16"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of VPC to use, required if `create_vpc` is `false` | `string` | `""` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of the VPC to create. | `string` | `"bufstream-vpc-1"` | no |
+| <a name="input_vpc_name"></a> [internal\_only\_nlb](#internal\_only\_nlb) | Allows enabling internet-facing load balancer for Bufstream | `bool` | `true` | no |
 
 ## Outputs
 
 No outputs.
+internal_only_nlb

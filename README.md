@@ -89,6 +89,7 @@ Recommended variables in `tfvars`:
 | ------------------- | -------------------------- |
 | eks_cluster_name    | Name for the EKS cluster   |
 | eks_cluster_version | Version of the EKS cluster |
+| internal_only_nlb   | Allows public NLB traffic  |
 
 ## GCP
 
