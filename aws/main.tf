@@ -9,8 +9,6 @@ resource "random_string" "deployment_id" {
   upper   = false
 }
 
-
-
 locals {
   deploy_id = random_string.deployment_id.result
   cluster_name = var.eks_cluster_name == null ? "bufstream-${local.deploy_id}" : var.eks_cluster_name
