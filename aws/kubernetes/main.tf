@@ -1,13 +1,12 @@
 locals {
-  oidc_url         = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].url
-  oidc_arn         = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].arn
-  k8s_cluster_name = var.cluster_name == null ? "bufstream-${var.deployment_id}" : var.cluster_name
+  oidc_url = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].url
+  oidc_arn = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].arn
 }
 
 data "aws_caller_identity" "this" {}
 
 resource "aws_eks_cluster" "bufstream" {
-  name                          = local.k8s_cluster_name
+  name                          = var.cluster_name
   role_arn                      = aws_iam_role.cluster.arn
   version                       = var.cluster_version
   bootstrap_self_managed_addons = false
@@ -51,7 +50,7 @@ resource "aws_eks_cluster" "bufstream" {
 }
 
 resource "aws_iam_role" "node" {
-  name = "eks-auto-node-${local.k8s_cluster_name}"
+  name = "eks-auto-node-${var.cluster_name}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -80,7 +79,7 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEC2ContainerRegistryPullOn
 }
 
 resource "aws_iam_role" "cluster" {
-  name = "eks-cluster-${local.k8s_cluster_name}"
+  name = "eks-cluster-${var.cluster_name}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -179,7 +178,7 @@ resource "aws_iam_openid_connect_provider" "irsa" {
   url             = aws_eks_cluster.bufstream.identity[0].oidc[0].issuer
 
   tags = {
-    Name = local.k8s_cluster_name
+    Name = var.cluster_name
   }
 }
 

@@ -37,7 +37,7 @@ variable "vpc_id" {
 variable "vpc_name" {
   description = "Name of the VPC to create."
   type        = string
-  default     = "bufstream-vpc-1"
+  default     = null
 }
 
 variable "vpc_cidr" {
@@ -75,7 +75,7 @@ variable "s3_vpc_endpoint" {
 variable "eks_cluster_name" {
   description = "Name of the EKS cluster."
   type        = string
-  default     = "bufstream-1"
+  default     = null
 }
 
 variable "eks_cluster_version" {
