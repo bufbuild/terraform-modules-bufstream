@@ -1,6 +1,6 @@
 variable "cluster_name" {
   type    = string
-  default = "bufstream-1"
+  default = ""
 }
 
 variable "cluster_version" {
@@ -36,4 +36,9 @@ variable "bufstream_service_account" {
   description = "Service account name for bufstream."
   type        = string
   default     = "bufstream-service-account"
+}
+
+variable "deployment_id" {
+  desription = "Unique ID suffix for object uniqueness"
+  type       = string
 }

@@ -2,6 +2,14 @@ provider "aws" {
   region = var.region
 }
 
+resource "random_string" "deployment_id" {
+  length  = 10
+  special = false
+  numeric = false
+  upper   = false
+}
+
+
 module "network" {
   source             = "./network"
   create_vpc         = var.create_vpc
@@ -54,7 +62,7 @@ module "postgres" {
 # The ingress controller will assume control after the helm install.
 resource "aws_security_group" "bufstream-nlb" {
   count  = var.create_nlb ? 1 : 0
-  name   = "bufstream"
+  name   = "bufstream-${random_string.deployment_id}"
   vpc_id = module.network.vpc_id
 
   egress {
@@ -67,7 +75,7 @@ resource "aws_security_group" "bufstream-nlb" {
 
 resource "aws_lb" "bufstream" {
   count              = var.create_nlb ? 1 : 0
-  name               = "bufstream-app"
+  name               = "bufstream-app-${random_string.deployment_id}"
   internal           = var.internal_only_nlb
   load_balancer_type = "network"
   subnets            = var.internal_only_nlb ? module.network.private_subnet_ids : module.network.public_subnet_ids
