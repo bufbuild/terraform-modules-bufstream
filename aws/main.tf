@@ -31,6 +31,7 @@ module "kubernetes" {
   use_pod_identity               = var.use_pod_identity
   bufstream_namespace            = var.bufstream_k8s_namespace
   bufstream_service_account      = var.bufstream_service_account
+  deployment_id                  = random_string.deployment_id.result
 }
 
 module "storage" {
@@ -62,7 +63,7 @@ module "postgres" {
 # The ingress controller will assume control after the helm install.
 resource "aws_security_group" "bufstream-nlb" {
   count  = var.create_nlb ? 1 : 0
-  name   = "bufstream-${random_string.deployment_id}"
+  name   = "bufstream-${random_string.deployment_id.result}"
   vpc_id = module.network.vpc_id
 
   egress {
@@ -75,7 +76,7 @@ resource "aws_security_group" "bufstream-nlb" {
 
 resource "aws_lb" "bufstream" {
   count              = var.create_nlb ? 1 : 0
-  name               = "bufstream-app-${random_string.deployment_id}"
+  name               = "bufstream-app-${random_string.deployment_id.result}"
   internal           = var.internal_only_nlb
   load_balancer_type = "network"
   subnets            = var.internal_only_nlb ? module.network.private_subnet_ids : module.network.public_subnet_ids
