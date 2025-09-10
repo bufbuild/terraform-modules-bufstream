@@ -10,9 +10,9 @@ resource "random_string" "deployment_id" {
 }
 
 locals {
-  deploy_id = random_string.deployment_id.result
+  deploy_id    = random_string.deployment_id.result
   cluster_name = var.eks_cluster_name == null ? "bufstream-${local.deploy_id}" : var.eks_cluster_name
-  vpc_name = var.vpc_name == null ? "bufstream-vpc-${local.deploy_id}" : var.vpc_name
+  vpc_name     = var.vpc_name == null ? "bufstream-vpc-${local.deploy_id}" : var.vpc_name
 }
 
 module "network" {
