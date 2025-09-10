@@ -9,7 +9,6 @@ resource "random_string" "deployment_id" {
   upper   = false
 }
 
-
 module "network" {
   source             = "./network"
   create_vpc         = var.create_vpc

@@ -1,7 +1,7 @@
 locals {
   oidc_url         = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].url
   oidc_arn         = var.use_pod_identity ? "unused" : aws_iam_openid_connect_provider.irsa[0].arn
-  k8s_cluster_name = var.cluster_name == "" ? "bufstream-1-${var.deployment_id}" : var.cluster_name
+  k8s_cluster_name = var.cluster_name == null ? "bufstream-${var.deployment_id}" : var.cluster_name
 }
 
 data "aws_caller_identity" "this" {}
