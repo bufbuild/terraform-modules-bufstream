@@ -183,7 +183,7 @@ resource "aws_iam_openid_connect_provider" "irsa" {
 }
 
 resource "aws_iam_role" "bufstream_role" {
-  name = "BufstreamRole-${var.deployment_id}"
+  name = "${var.cluster_name}-cluster-role"
 
   assume_role_policy = var.use_pod_identity ? data.aws_iam_policy_document.bufstream_pod_identity.json : data.aws_iam_policy_document.bufstream_irsa.json
 }

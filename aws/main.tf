@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "random_string" "deployment_id" {
-  length  = 10
+  length  = 16
   special = false
   numeric = false
   upper   = false
@@ -13,6 +13,7 @@ locals {
   deploy_id    = random_string.deployment_id.result
   cluster_name = var.eks_cluster_name == null ? "bufstream-${local.deploy_id}" : var.eks_cluster_name
   vpc_name     = var.vpc_name == null ? "bufstream-vpc-${local.deploy_id}" : var.vpc_name
+  rds_id       = var.rds_identifier == null ? local.deploy_id : var.rds_identifier
 }
 
 module "network" {
@@ -36,7 +37,6 @@ module "kubernetes" {
   use_pod_identity               = var.use_pod_identity
   bufstream_namespace            = var.bufstream_k8s_namespace
   bufstream_service_account      = var.bufstream_service_account
-  deployment_id                  = random_string.deployment_id.result
 }
 
 module "storage" {
@@ -55,7 +55,7 @@ module "postgres" {
 
   vpc_id                = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
   subnet_ids            = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
-  rds_identifier        = var.rds_identifier
+  rds_identifier        = local.rds_id
   postgres_username     = var.postgres_username
   rds_port              = var.rds_port
   rds_instance_class    = var.rds_instance_class

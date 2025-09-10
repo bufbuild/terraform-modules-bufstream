@@ -3,7 +3,7 @@ data "aws_vpc" "buf" {
 }
 
 resource "aws_security_group" "rds" {
-  name   = "${local.identifier}-rds-sg"
+  name   = "${var.rds_identifier}-rds-sg"
   vpc_id = var.vpc_id
 
   ingress {
@@ -15,29 +15,12 @@ resource "aws_security_group" "rds" {
 
 }
 
-variable "rds_identifier" {
-  description = "Identifier of the RDS instance"
-  type        = string
-  default     = null
-}
-
-resource "random_string" "rds_identifier" {
-  length  = 16
-  special = false
-  numeric = false
-  upper   = false
-}
-
-locals {
-  identifier = var.rds_identifier != null ? var.rds_identifier : random_string.rds_identifier.result
-}
-
 resource "aws_db_subnet_group" "rds" {
-  name       = "${local.identifier}-subnet-group"
+  name       = "${var.rds_identifier}-subnet-group"
   subnet_ids = var.subnet_ids
 
   tags = {
-    Name = "${local.identifier}-subnet-group"
+    Name = "${var.rds_identifier}-subnet-group"
   }
 }
 
@@ -55,3 +38,4 @@ resource "aws_db_instance" "bufpg" {
   db_subnet_group_name   = aws_db_subnet_group.rds.name
   vpc_security_group_ids = [aws_security_group.rds.id]
 }
+

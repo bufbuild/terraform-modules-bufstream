@@ -45,3 +45,8 @@ variable "postgres_db_name" {
   type        = string
   default     = "bufstream"
 }
+
+variable "rds_identifier" {
+  description = "Identifier of the RDS instance"
+  type        = string
+}

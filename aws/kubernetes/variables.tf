@@ -36,8 +36,3 @@ variable "bufstream_service_account" {
   type        = string
   default     = "bufstream-service-account"
 }
-
-variable "deployment_id" {
-  description = "Unique ID suffix for object uniqueness"
-  type        = string
-}
