@@ -79,7 +79,6 @@ Required variables in `tfvars`:
 | Variable    | Description                                |
 | ----------- | ------------------------------------------ |
 | region      | Which region to deploy resources in        |
-| vpc_name    | Name of the VPC to create (or use)         |
 | bucket_name | Name of s3 bucket, must be globally unique |
 | profile     | AWS profile to use for Terraform           |
 

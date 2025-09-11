@@ -2,10 +2,24 @@ provider "aws" {
   region = var.region
 }
 
+resource "random_string" "deployment_id" {
+  length  = 16
+  special = false
+  numeric = false
+  upper   = false
+}
+
+locals {
+  deploy_id    = random_string.deployment_id.result
+  cluster_name = var.eks_cluster_name == null ? "bufstream-${local.deploy_id}" : var.eks_cluster_name
+  vpc_name     = var.vpc_name == null ? "bufstream-vpc-${local.deploy_id}" : var.vpc_name
+  rds_id       = var.rds_identifier == null ? local.deploy_id : var.rds_identifier
+}
+
 module "network" {
   source             = "./network"
   create_vpc         = var.create_vpc
-  vpc_name           = var.vpc_name
+  vpc_name           = local.vpc_name
   vpc_id             = var.vpc_id
   vpc_cidr           = var.vpc_cidr
   create_subnets     = var.create_subnets
@@ -16,7 +30,7 @@ module "network" {
 
 module "kubernetes" {
   source                         = "./kubernetes"
-  cluster_name                   = var.eks_cluster_name
+  cluster_name                   = local.cluster_name
   cluster_version                = var.eks_cluster_version
   cluster_endpoint_public_access = var.cluster_endpoint_public_access
   subnet_ids                     = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
@@ -41,7 +55,7 @@ module "postgres" {
 
   vpc_id                = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
   subnet_ids            = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
-  rds_identifier        = var.rds_identifier
+  rds_identifier        = local.rds_id
   postgres_username     = var.postgres_username
   rds_port              = var.rds_port
   rds_instance_class    = var.rds_instance_class
@@ -54,7 +68,7 @@ module "postgres" {
 # The ingress controller will assume control after the helm install.
 resource "aws_security_group" "bufstream-nlb" {
   count  = var.create_nlb ? 1 : 0
-  name   = "bufstream"
+  name   = "bufstream-${random_string.deployment_id.result}"
   vpc_id = module.network.vpc_id
 
   egress {
@@ -67,7 +81,7 @@ resource "aws_security_group" "bufstream-nlb" {
 
 resource "aws_lb" "bufstream" {
   count              = var.create_nlb ? 1 : 0
-  name               = "bufstream-app"
+  name               = "bufstream-app-${random_string.deployment_id.result}"
   internal           = var.internal_only_nlb
   load_balancer_type = "network"
   subnets            = var.internal_only_nlb ? module.network.private_subnet_ids : module.network.public_subnet_ids
@@ -99,7 +113,7 @@ locals {
 
   kubeconfig = templatefile("${path.module}/kubeconfig.yaml.tpl", {
     region              = var.region
-    cluster_name        = var.eks_cluster_name
+    cluster_name        = local.cluster_name
     cluster_arn         = module.kubernetes.cluster_arn
     cluster_endpoint    = module.kubernetes.cluster_endpoint
     cluster_certificate = module.kubernetes.cluster_certificate

@@ -1,6 +1,5 @@
 variable "cluster_name" {
-  type    = string
-  default = "bufstream-1"
+  type = string
 }
 
 variable "cluster_version" {
