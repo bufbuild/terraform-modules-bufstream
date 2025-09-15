@@ -4,7 +4,7 @@ variable "cluster_name" {
 
 variable "cluster_version" {
   type    = string
-  default = "1.31"
+  default = "1.33"
 }
 
 variable "cluster_endpoint_public_access" {
