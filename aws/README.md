@@ -46,7 +46,7 @@
 | <a name="input_create_subnets"></a> [create\_subnets](#input\_create\_subnets) | Create public and private subnets. | `bool` | `true` | no |
 | <a name="input_create_vpc"></a> [create\_vpc](#input\_create\_vpc) | Create a VPC. | `bool` | `true` | no |
 | <a name="input_eks_cluster_name"></a> [eks\_cluster\_name](#input\_eks\_cluster\_name) | Name of the EKS cluster. | `string` | `"bufstream-1"` | no |
-| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Version of the EKS cluster. | `string` | `"1.31"` | no |
+| <a name="input_eks_cluster_version"></a> [eks\_cluster\_version](#input\_eks\_cluster\_version) | Version of the EKS cluster. | `string` | `"1.33"` | no |
 | <a name="input_generate_config_files_path"></a> [generate\_config\_files\_path](#input\_generate\_config\_files\_path) | If present, generate config files for bufstream values, kubeconfig and the context name at the selected path. | `string` | `null` | no |
 | <a name="input_postgres_db_name"></a> [postgres\_db\_name](#input\_postgres\_db\_name) | Name of the database for metadata | `string` | `"bufstream"` | no |
 | <a name="input_postgres_password"></a> [postgres\_password](#input\_postgres\_password) | Postgres password for RDS instance | `string` | `null` | no |
