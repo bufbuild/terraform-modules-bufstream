@@ -35,3 +35,8 @@ variable "bufstream_service_account" {
   description = "Bufstream Service Account Email."
   type        = string
 }
+
+variable "custom_iam_role_id" {
+  description = "Identifier to separate roles created in the same project. Prevents deletion collision"
+  type        = string
+}

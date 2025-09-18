@@ -26,7 +26,7 @@ resource "google_project_iam_custom_role" "bufstream_iam_role" {
   count = var.create_custom_iam_role ? 1 : 0
 
   project     = var.project_id
-  role_id     = "bufstream.gcsAdmin"
+  role_id     = var.custom_iam_role_id
   title       = "Bufstream GCS Admin"
   description = "Provides Minimum GCS Permissions needed for Bufstream"
 

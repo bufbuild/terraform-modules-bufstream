@@ -21,7 +21,7 @@ resource "google_service_account" "bufstream_cluster" {
   count = var.cluster_create ? 1 : 0
 
   project      = var.project_id
-  account_id   = "tf-gke-${var.cluster_name}"
+  account_id   = "gke-${var.cluster_name}"
   display_name = "Bufstream Cluster Service Account"
 }
 

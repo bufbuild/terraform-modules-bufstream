@@ -159,9 +159,9 @@ variable "bufstream_metadata" {
 }
 
 variable "instance_name" {
-  description = "Name of the CloudSQL instance"
+  description = "Name of either CloudSQL or Spanner instance"
   type        = string
-  default     = null
+  default     = "bufstream-metadata"
 }
 
 variable "database_version" {
@@ -216,12 +216,6 @@ variable "metadata_database_name" {
 }
 
 # Spanner
-
-variable "spanner_instance_name" {
-  description = "Name of the Spanner instance"
-  type        = string
-  default     = null
-}
 
 variable "spanner_config" {
   description = "The Spanner configuration to use"

@@ -1,3 +1,10 @@
+resource "random_string" "deployment_id" {
+  length  = 12
+  special = false
+  numeric = false
+  upper   = false
+}
+
 locals {
   compute_api_ref           = var.enable_apis ? google_project_service.apis["compute.googleapis.com"] : data.google_project_service.apis["compute.googleapis.com"]
   container_api_ref         = var.enable_apis ? google_project_service.apis["container.googleapis.com"] : data.google_project_service.apis["container.googleapis.com"]
@@ -6,8 +13,6 @@ locals {
   sql_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["sqladmin.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["sqladmin.googleapis.com"] : null)
   iam_api_ref               = var.enable_apis ? (local.create_pg ? google_project_service.apis["iam.googleapis.com"] : null) : (local.create_pg ? data.google_project_service.apis["iam.googleapis.com"] : null)
   spanner_api_ref           = var.enable_apis ? (local.create_spanner ? google_project_service.apis["spanner.googleapis.com"] : null) : (local.create_spanner ? data.google_project_service.apis["spanner.googleapis.com"] : null)
-
-
 
   create_pg      = var.bufstream_metadata == "postgres"
   create_spanner = var.bufstream_metadata == "spanner"
@@ -32,6 +37,8 @@ locals {
   apis = toset(concat(local.base_apis, local.sql_apis, local.spanner_apis))
 
   spanner_config = var.spanner_config != null ? var.spanner_config : "regional-${var.region}"
+
+  deploy_id = random_string.deployment_id.result
 }
 
 resource "google_project_service" "apis" {
@@ -40,7 +47,7 @@ resource "google_project_service" "apis" {
   service  = each.value
 
   disable_dependent_services = true
-  disable_on_destroy         = true
+  disable_on_destroy         = false
 }
 
 data "google_project_service" "apis" {
@@ -54,9 +61,9 @@ module "network" {
 
   project_id    = var.project_id
   vpc_create    = var.vpc_create
-  vpc_name      = var.vpc_name
+  vpc_name      = "${var.vpc_name}-${local.deploy_id}"
   subnet_create = var.subnet_create
-  subnet_name   = var.subnet_name
+  subnet_name   = "${var.subnet_name}-${local.deploy_id}"
   subnet_region = var.region
   subnet_cidr   = var.subnet_cidr
 
@@ -74,7 +81,7 @@ module "kubernetes" {
   region     = var.region
 
   cluster_create    = var.cluster_create
-  cluster_name      = var.cluster_name
+  cluster_name      = "${var.cluster_name}-${local.deploy_id}"
   machine_type      = var.machine_type
   ilb_firewall_cidr = var.ilb_firewall_cidr
 
@@ -83,7 +90,7 @@ module "kubernetes" {
   wif_bufstream_k8s_service_account = var.wif_bufstream_k8s_service_account
 
   service_account_create = var.service_account_create
-  service_account_name   = var.service_account_name
+  service_account_name   = "${var.service_account_name}-${local.deploy_id}"
 
   network = module.network.vpc_ref
   subnet  = module.network.subnet_ref
@@ -107,6 +114,7 @@ module "storage" {
   bucket_grant_permissions = var.bucket_grant_permissions
 
   create_custom_iam_role = var.create_custom_iam_role
+  custom_iam_role_id     = "bufstream.${local.deploy_id}GcsAdmin"
 
   bufstream_service_account = module.kubernetes.bufstream_service_account
 
@@ -120,7 +128,7 @@ module "spanner" {
 
   source = "./metadata/spanner"
 
-  instance_name        = var.spanner_instance_name
+  instance_name        = "${var.instance_name}-${local.deploy_id}"
   spanner_config       = local.spanner_config
   project_id           = var.project_id
   user_service_account = module.kubernetes.bufstream_service_account
@@ -141,7 +149,7 @@ module "postgres" {
   vpc_id                     = module.network.vpc_id
   region                     = var.region
   project_id                 = var.project_id
-  instance_name              = var.instance_name
+  instance_name              = "${var.instance_name}-${local.deploy_id}"
   database_version           = var.database_version
   database_name              = var.metadata_database_name
   cloudsql_tier              = var.cloudsql_tier
@@ -170,7 +178,7 @@ locals {
 resource "google_compute_address" "ip" {
   project = var.project_id
 
-  name = "bufstream"
+  name = "bufstream-${local.deploy_id}"
 
   address_type = "INTERNAL"
   region       = var.region
