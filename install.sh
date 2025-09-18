@@ -5,7 +5,7 @@ function clean_up_gcp {
   BUCKET_DATA=$(terraform show -json | jq -r '.values.root_module.child_modules.[]?.resources.[]? | select (.type == "google_storage_bucket")')
   BUCKET_NAME=$(echo "${BUCKET_DATA}" | jq -r '.values.id')
   BUCKET_LCP=$(echo "${BUCKET_DATA}" | jq -r '.values.lifecycle_rule')
-  if [[ -n $BUCKET_NAME && "${BUCKET_LCP[*]} -eq 0" ]]; then
+  if [[ -n "${BUCKET_NAME}" && "${BUCKET_LCP[*]}" -eq 0 ]]; then
     echo '{"lifecycle": {"rule": [{"action": {"type": "Delete"},"condition": {"age": 0}}]}}' > "${CONFIG_GEN_PATH}/lifecycle.json"
     gcloud storage buckets update "gs://${BUCKET_NAME}" --lifecycle-file "${CONFIG_GEN_PATH}/lifecycle.json"
     terraform state rm module.storage.google_storage_bucket.bufstream[0]
