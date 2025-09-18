@@ -1,15 +1,3 @@
-resource "random_string" "instance_name" {
-  length  = 16
-  special = false
-  numeric = false
-  upper   = false
-}
-
-locals {
-  instance_name = var.instance_name != null ? var.instance_name : random_string.instance_name.result
-}
-
-
 resource "google_project_iam_member" "cloudsql_client_role" {
   project = var.project_id
   role    = "roles/cloudsql.client"
@@ -23,7 +11,7 @@ resource "google_project_iam_member" "cloudsql_instance_user_role" {
 }
 
 resource "google_sql_database_instance" "bufpg" {
-  name             = local.instance_name
+  name             = var.instance_name
   database_version = var.database_version
   region           = var.region
   project          = var.project_id
