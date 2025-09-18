@@ -47,13 +47,13 @@ resource "google_project_service" "apis" {
   service  = each.value
 
   disable_dependent_services = true
-  disable_on_destroy         = true
+  disable_on_destroy         = false
 }
 
 data "google_project_service" "apis" {
-  for_each = var.enable_apis ? [] : local.apis
-  project  = var.project_id
-  service  = each.value
+  for_each           = var.enable_apis ? [] : local.apis
+  project            = var.project_id
+  service            = each.value
 }
 
 module "network" {
@@ -114,7 +114,7 @@ module "storage" {
   bucket_grant_permissions = var.bucket_grant_permissions
 
   create_custom_iam_role = var.create_custom_iam_role
-  custom_iam_role_id = "bufstream.${local.deploy_id}GcsAdmin"
+  custom_iam_role_id     = "bufstream.${local.deploy_id}GcsAdmin"
 
   bufstream_service_account = module.kubernetes.bufstream_service_account
 
