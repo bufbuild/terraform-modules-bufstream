@@ -50,3 +50,13 @@ variable "rds_identifier" {
   description = "Identifier of the RDS instance"
   type        = string
 }
+
+variable "multi_az" {
+  type    = bool
+  default = true
+}
+
+variable "availability_zone" {
+  type    = string
+  default = null
+}

@@ -34,8 +34,9 @@ resource "aws_db_instance" "bufpg" {
   instance_class              = var.rds_instance_class
   db_name                     = var.postgres_db_name
   skip_final_snapshot         = true
-
-  db_subnet_group_name   = aws_db_subnet_group.rds.name
-  vpc_security_group_ids = [aws_security_group.rds.id]
+  multi_az                    = var.multi_az
+  availability_zone           = var.availability_zone
+  db_subnet_group_name        = aws_db_subnet_group.rds.name
+  vpc_security_group_ids      = [aws_security_group.rds.id]
 }
 
