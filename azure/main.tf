@@ -1,11 +1,20 @@
+resource "random_string" "deploy_id" {
+  count = var.resource_group_name == null ? 1 : 0
+
+  length  = 10
+  special = false
+  numeric = false
+  upper   = false
+}
+
 locals {
-  rg_name = var.resource_group_create ? azurerm_resource_group.rg[0].name : data.azurerm_resource_group.rg[0].name
+  rg_name = var.resource_group_name == null ? "bufstream-${random_string.deploy_id[0].result}" : data.azurerm_resource_group.rg[0].name
 }
 
 resource "azurerm_resource_group" "rg" {
   count = var.resource_group_create ? 1 : 0
 
-  name     = var.resource_group_name
+  name     = local.rg_name
   location = var.location
 }
 
@@ -72,6 +81,9 @@ module "kubernetes" {
   cluster_dns_service_ip = var.cluster_dns_service_ip
   cluster_vnet_subnet_id = module.network.cluster_subnet.id
   cluster_pod_subnet_id  = module.network.pods_subnet.id
+
+  min_node_count = var.cluster_min_node_count
+  max_node_count = var.cluster_max_node_count
 
   bufstream_identity_create = var.bufstream_identity_create
   bufstream_identity_name   = var.bufstream_identity_name
