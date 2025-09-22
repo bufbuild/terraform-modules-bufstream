@@ -7,7 +7,7 @@ variable "resource_group_create" {
 variable "resource_group_name" {
   description = "Name of new resource group to create or use."
   type        = string
-  default     = "bufstream"
+  default     = null
 }
 
 variable "location" {
