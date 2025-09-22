@@ -115,6 +115,18 @@ variable "cluster_grant_admin" {
   default     = true
 }
 
+variable "cluster_min_node_count" {
+  description = "Minimum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 1
+}
+
+variable "cluster_max_node_count" {
+  description = "Maximum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 3
+}
+
 variable "bufstream_identity_create" {
   description = "Whether to create a new Azure bufstream identity."
   type        = bool

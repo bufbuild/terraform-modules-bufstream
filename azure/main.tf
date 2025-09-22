@@ -73,6 +73,9 @@ module "kubernetes" {
   cluster_vnet_subnet_id = module.network.cluster_subnet.id
   cluster_pod_subnet_id  = module.network.pods_subnet.id
 
+  min_node_count = var.cluster_min_node_count
+  max_node_count = var.cluster_max_node_count
+
   bufstream_identity_create = var.bufstream_identity_create
   bufstream_identity_name   = var.bufstream_identity_name
 
