@@ -30,6 +30,18 @@ variable "subnet" {
   type        = string
 }
 
+variable "min_node_count" {
+  description = "Minimum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 1
+}
+
+variable "max_node_count" {
+  description = "Maximum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 3
+}
+
 variable "machine_type" {
   description = "Machine type to use for node pools in case of creation."
   type        = string

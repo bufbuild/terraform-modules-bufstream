@@ -108,8 +108,8 @@ resource "google_container_cluster" "bufstream" {
     initial_node_count = 1
 
     autoscaling {
-      min_node_count = 1
-      max_node_count = 1
+      total_min_node_count = 1
+      total_max_node_count = 1
     }
 
     node_config {
@@ -140,7 +140,7 @@ resource "google_container_node_pool" "default_pool" {
 
   cluster = local.cluster_ref
 
-  initial_node_count = 1
+  initial_node_count = var.min_node_count
 
   upgrade_settings {
     max_surge       = 1
@@ -148,8 +148,8 @@ resource "google_container_node_pool" "default_pool" {
   }
 
   autoscaling {
-    min_node_count = 1
-    max_node_count = 3
+    total_min_node_count = var.min_node_count
+    total_max_node_count = var.max_node_count
   }
 
   node_config {
