@@ -1,10 +1,3 @@
-resource "random_string" "rg_id" {
-  length  = 10
-  special = false
-  numeric = false
-  upper   = false
-}
-
 locals {
   rg_name = var.resource_group_create ? azurerm_resource_group.rg[0].name : data.azurerm_resource_group.rg[0].name
 }
@@ -12,7 +5,7 @@ locals {
 resource "azurerm_resource_group" "rg" {
   count = var.resource_group_create ? 1 : 0
 
-  name     = "var.resource_group_name-${local.rg_id}"
+  name     = var.resource_group_name
   location = var.location
 }
 
