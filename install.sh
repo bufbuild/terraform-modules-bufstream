@@ -118,6 +118,13 @@ kubectl \
     --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
     apply -f -
 
+if [[ "${BUFSTREAM_CLOUD}" == "aws" && -n "${BUFSTREAM_AWS_MIN_NODE_COUNT}" ]] ; then
+  echo "Adding headroom pods in AWS..."
+  cat headroom.yaml | sed "s/replicas: null/replicas: ${BUFSTREAM_AWS_MIN_NODE_COUNT}/g" | kubectl \
+    --kubeconfig "${CONFIG_GEN_PATH}/kubeconfig.yaml" \
+    apply -f -
+fi
+
 if [[ "${BUFSTREAM_METADATA}" == "postgres" ]] ; then
   echo "Running Postgres setup script..."
   KUBECONFIG="${CONFIG_GEN_PATH}/kubeconfig.yaml" \
