@@ -40,7 +40,7 @@ if [[ "${BUFSTREAM_TFVARS}" == "" ]] ; then
 fi
 
 case "${BUFSTREAM_METADATA}" in
-"postgres" | "etcd")
+"postgres" | "etcd" | "aurora")
   ;;
 "spanner")
   if [[ "$BUFSTREAM_CLOUD" != "gcp" ]] ; then
