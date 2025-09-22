@@ -8,7 +8,7 @@ resource "random_string" "deploy_id" {
 }
 
 locals {
-  rg_name = var.resource_group_name == null ? "bufstream-${random_string.deploy_id[0].result}" : var.resource_group_name
+  rg_name = var.resource_group_name == null ? "bufstream-${random_string.deploy_id[0].result}" : data.azurerm_resource_group.rg[0].name
 }
 
 resource "azurerm_resource_group" "rg" {
