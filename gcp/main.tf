@@ -89,6 +89,9 @@ module "kubernetes" {
   wif_bufstream_k8s_namespace       = var.bufstream_k8s_namespace
   wif_bufstream_k8s_service_account = var.wif_bufstream_k8s_service_account
 
+  min_node_count = var.cluster_min_node_count
+  max_node_count = var.cluster_max_node_count
+
   service_account_create = var.service_account_create
   service_account_name   = "${var.service_account_name}-${local.deploy_id}"
 

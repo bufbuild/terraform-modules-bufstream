@@ -114,6 +114,18 @@ variable "create_internal_lb" {
   default     = false
 }
 
+variable "cluster_min_node_count" {
+  description = "Minimum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 1
+}
+
+variable "cluster_max_node_count" {
+  description = "Maximum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 3
+}
+
 # Storage
 
 variable "bucket_create" {
