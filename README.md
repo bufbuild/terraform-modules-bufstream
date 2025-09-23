@@ -114,6 +114,10 @@ Recommended variables in `tfvars`:
 | ------------ | ------------------------ |
 | cluster_name | Name for the GKE cluster |
 
+This setup uses EKS Auto Mode with Karpenter, so we can't control the minimum amount of nodes
+directly as we do with GCP and Azure. Instead, we use preemptible pods. To use them, set the
+environment variable `BUFSTREAM_AWS_MIN_NODE_COUNT=<number>`.
+
 ## Azure
 
 By default, the module creates all resources necessary to deploy a Kubernetes cluster to the desired project.
