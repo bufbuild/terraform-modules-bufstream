@@ -1,6 +1,6 @@
 locals {
   vpc_id           = var.create_vpc ? aws_vpc.bufstream_vpc[0].id : var.vpc_id
-  azs              = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs              = slice(data.aws_availability_zones.available.names, 0, 2)
   subnet_cidrs     = cidrsubnets(var.vpc_cidr, 5, 5, 5, 5, 5, 5)
   private_az_cidrs = zipmap(local.azs, slice(local.subnet_cidrs, 0, length(local.azs)))
   public_az_cidr   = zipmap(local.azs, slice(local.subnet_cidrs, length(local.azs), length(local.azs) * 2))
