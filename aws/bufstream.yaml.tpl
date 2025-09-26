@@ -31,7 +31,7 @@ metadata:
     - host: "bufstream-etcd.bufstream.svc.cluster.local"
       port: 2379
 %{ endif ~}
-%{ if metadata == "postgres" ~}
+%{ if metadata == "postgres" || metadata == "aurora" ~}
   use: postgres
   postgres:
     secretName: bufstream-postgres

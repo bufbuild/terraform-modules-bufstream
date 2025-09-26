@@ -125,7 +125,7 @@ if [[ "${BUFSTREAM_CLOUD}" == "aws" && -n "${BUFSTREAM_AWS_MIN_NODE_COUNT}" ]] ;
     apply -f -
 fi
 
-if [[ "${BUFSTREAM_METADATA}" == "postgres" ]] ; then
+if [[ "${BUFSTREAM_METADATA}" == "postgres" || "${BUFSTREAM_METADATA}" == "aurora" ]] ; then
   echo "Running Postgres setup script..."
   KUBECONFIG="${CONFIG_GEN_PATH}/kubeconfig.yaml" \
   NAMESPACE="${BUFSTREAM_NAMESPACE:-bufstream}" \

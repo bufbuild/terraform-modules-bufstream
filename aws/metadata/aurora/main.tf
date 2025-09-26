@@ -36,6 +36,12 @@ resource "aws_rds_cluster" "bufpg" {
   vpc_security_group_ids      = [aws_security_group.aurora.id]
   manage_master_user_password = true
   skip_final_snapshot         = true
+
+  lifecycle {
+    ignore_changes = [
+      availability_zones
+    ]
+  }
 }
 
 resource "aws_rds_cluster_instance" "bufstream_aurora_instances" {
