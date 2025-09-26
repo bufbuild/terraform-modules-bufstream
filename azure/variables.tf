@@ -7,7 +7,7 @@ variable "resource_group_create" {
 variable "resource_group_name" {
   description = "Name of new resource group to create or use."
   type        = string
-  default     = "bufstream"
+  default     = null
 }
 
 variable "location" {
@@ -113,6 +113,18 @@ variable "cluster_grant_admin" {
   description = "Grant admin role permission to the TF running actor. If cluster_admin_actor is set, use that, otherwise use the current caller."
   type        = bool
   default     = true
+}
+
+variable "cluster_min_node_count" {
+  description = "Minimum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 1
+}
+
+variable "cluster_max_node_count" {
+  description = "Maximum amount of nodes that autoscaler can place in the node pool."
+  type        = number
+  default     = 3
 }
 
 variable "bufstream_identity_create" {

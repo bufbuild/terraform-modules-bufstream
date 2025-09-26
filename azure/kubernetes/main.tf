@@ -34,8 +34,8 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     vm_size = var.cluster_vm_size
 
     auto_scaling_enabled = true
-    min_count            = 1
-    max_count            = 3
+    min_count            = var.min_node_count
+    max_count            = var.max_node_count
 
     vnet_subnet_id = var.cluster_vnet_subnet_id
     pod_subnet_id  = var.cluster_pod_subnet_id

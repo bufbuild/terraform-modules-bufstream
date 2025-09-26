@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headroom
+spec:
+  replicas: null
+  selector:
+    matchLabels:
+      app: headroom
+  template:
+    metadata:
+      labels:
+        app: headroom
+    spec:
+      priorityClassName: headroom
+      containers:
+      - name: placeholder
+        image: registry.k8s.io/pause:3.9
+        resources:
+          limits:
+            cpu: 1m
+            memory: 8Mi
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - headroom
+            topologyKey: kubernetes.io/hostname
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: headroom
+value: -2147483648
+globalDefault: false
+description: "Placeholder pods to maintain minimum node capacity."
