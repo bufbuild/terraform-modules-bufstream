@@ -208,3 +208,9 @@ variable "availability_zone" {
   type        = string
   default     = null
 }
+
+variable "cluster_instance_count" {
+  description = "number of Aurora nodes to provision"
+  type        = number
+  default     = 2
+}

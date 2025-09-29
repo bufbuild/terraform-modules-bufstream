@@ -3,6 +3,17 @@ variable "vpc_id" {
   type        = string
 }
 
+variable "cluster_instance_count" {
+  description = "number of instances of rds to provision"
+  type        = number
+  default     = 2
+}
+
+variable "aws_region" {
+  description = "region to provision resources"
+  type        = string
+}
+
 variable "postgres_username" {
   description = "Postgres username for aurora instance"
   type        = string

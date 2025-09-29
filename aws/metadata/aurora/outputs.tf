@@ -8,5 +8,5 @@ output "pg_dsn" {
 
 output "pg_pw_secret_arn" {
   description = "The ARN of the secret holding the PG password"
-  value       = aws_rds_cluster.bufpg.master_user_secret[0].secret_arn
+  value       = aws_secretsmanager_secret.aurora_pass_secret.arn
 }

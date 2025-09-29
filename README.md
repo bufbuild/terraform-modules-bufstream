@@ -73,6 +73,11 @@ account. It also creates some specific resources required for Bufstream: an S3 b
 Bufstream service account can assume to access the bucket using EKS Pod Identity.
 
 If Postgres is selected for the metadata storage, an RDS instance and a Secrets Manager secret for the Postgres user password are also created.
+If Aurora is selected for the metadata storage, an AWS Aurora cluster and a Secrets Manager secret for the Postgres user password are also created.
+
+If using Aurora, be aware that it attempts to use a single AZ for provisioned instances. You must provide a valid AZ for the region specified in
+the region variable. Most regions follow the convention of `us-east-1` -> `us-east-1a` for region -> az. This value does not have a default because
+it is different for every region.
 
 Required variables in `tfvars`:
 

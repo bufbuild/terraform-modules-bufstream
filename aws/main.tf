@@ -70,15 +70,17 @@ module "aurora" {
   source = "./metadata/aurora"
   count  = local.create_aurora ? 1 : 0
 
-  vpc_id                   = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
-  subnet_ids               = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
-  aurora_identifier        = local.aurora_id
-  postgres_username        = var.postgres_username
-  aurora_port              = var.aurora_port
-  aurora_instance_class    = var.aurora_instance_class
-  postgres_version         = var.postgres_version
-  postgres_db_name         = var.postgres_db_name
-  availability_zone        = var.availability_zone
+  vpc_id                 = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
+  subnet_ids             = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
+  aurora_identifier      = local.aurora_id
+  postgres_username      = var.postgres_username
+  aurora_port            = var.aurora_port
+  aurora_instance_class  = var.aurora_instance_class
+  postgres_version       = var.postgres_version
+  postgres_db_name       = var.postgres_db_name
+  availability_zone      = var.availability_zone
+  aws_region             = var.region
+  cluster_instance_count = var.cluster_instance_count
 }
 
 # We create this here so we can have the hostname ready for bufstream.

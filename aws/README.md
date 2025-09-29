@@ -52,6 +52,11 @@
 | <a name="input_postgres_password"></a> [postgres\_password](#input\_postgres\_password) | Postgres password for RDS instance | `string` | `null` | no |
 | <a name="input_postgres_username"></a> [postgres\_username](#input\_postgres\_username) | Postgres username for RDS instance | `string` | `"postgres"` | no |
 | <a name="input_postgres_version"></a> [postgres\_version](#input\_postgres\_version) | Postgres version | `string` | `"17"` | no |
+| <a name="input_aurora_identifier"></a> [aurora\_identifier](#input\_aurora\_identifier) | custom Aurora instance identifier | `string` | `null` | no |
+| <a name="input_aurora_port"></a> [aurora\_port](#input\_aurora\_port) | set a custom port for Aurora instances to listen on | `number` | `5432` | no |
+| <a name="input_aurora_instance_class"></a> [aurora\_instance\_class](#input\_aurora\_instance\_class) | instance class to use for Aurora | `string` | `"db.r6gd.xlarge"` | no |
+| <a name="input_availabilty_zone"></a> [availability\_zone](#input\_availability\_zone) | which AZ to use for the aurora instances. required if using Aurora | `string` | `null` | yes |
+| <a name="input_cluster_instance_count"></a> [cluster\_instance\_count](#input\_cluster\_instance\_count) | How many Aurora instances to create | `number` | `2` | no |
 | <a name="input_profile"></a> [profile](#input\_profile) | AWS profile for provider. | `string` | n/a | yes |
 | <a name="input_rds_allocated_storage"></a> [rds\_allocated\_storage](#input\_rds\_allocated\_storage) | Allocated storage for RDS | `number` | `20` | no |
 | <a name="input_rds_identifier"></a> [rds\_identifier](#input\_rds\_identifier) | Identifier of the RDS instance | `string` | `null` | no |
@@ -64,7 +69,7 @@
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS suggests a /19 but most will recommend a /16 to avoid IP exhaustion. https://docs.aws.amazon.com/eks/latest/best-practices/ip-opt.html#_mitigate_ip_exhaustion | `string` | `"10.64.0.0/16"` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | ID of VPC to use, required if `create_vpc` is `false` | `string` | `""` | no |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name of the VPC to create. | `string` | `"bufstream-vpc-1"` | no |
-| <a name="input_vpc_name"></a> [internal\_only\_nlb](#internal\_only\_nlb) | Allows enabling internet-facing load balancer for Bufstream | `bool` | `true` | no |
+| <a name="internal_only_nlb"></a> [internal\_only\_nlb](#internal\_only\_nlb) | Allows enabling internet-facing load balancer for Bufstream | `bool` | `true` | no |
 
 ## Outputs
 
