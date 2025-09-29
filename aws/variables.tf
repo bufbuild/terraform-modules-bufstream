@@ -14,9 +14,9 @@ variable "bufstream_metadata" {
   type        = string
 
   validation {
-    condition = contains(["postgres", "etcd"], var.bufstream_metadata)
+    condition = contains(["postgres", "etcd", "aurora"], var.bufstream_metadata)
 
-    error_message = "must be either 'postgres' or 'etcd'"
+    error_message = "must be either 'postgres', 'aurora', or 'etcd'"
   }
 }
 
@@ -44,6 +44,12 @@ variable "vpc_cidr" {
   description = "CIDR range for the VPC, needs to be able to contain six contiguous /21 subnets. AWS suggests a /19 but most will recommend a /16 to avoid IP exhaustion. https://docs.aws.amazon.com/eks/latest/best-practices/ip-opt.html#_mitigate_ip_exhaustion"
   type        = string
   default     = "10.64.0.0/16"
+}
+
+variable "internal_only_nlb" {
+  description = "toggle public accessibility of nlb on/off"
+  type        = bool
+  default     = true
 }
 
 variable "create_subnets" {
@@ -177,8 +183,34 @@ variable "postgres_db_name" {
   default     = "bufstream"
 }
 
-variable "internal_only_nlb" {
-  description = "toggle public accessibility of nlb on/off"
-  type        = bool
-  default     = true
+### aurora variables. not conendensed with prior to avoid breaking benchmark implementation
+
+variable "aurora_identifier" {
+  description = "Identifier of the Aurora instance"
+  type        = string
+  default     = null
+}
+
+variable "aurora_port" {
+  description = "Port number for the Aurora instance"
+  type        = number
+  default     = 5432
+}
+
+variable "aurora_instance_class" {
+  description = "Aurora instance class to use"
+  type        = string
+  default     = "db.r6gd.xlarge"
+}
+
+variable "availability_zone" {
+  description = "Single AZ used for Aurora"
+  type        = string
+  default     = null
+}
+
+variable "cluster_instance_count" {
+  description = "number of Aurora nodes to provision"
+  type        = number
+  default     = 2
 }

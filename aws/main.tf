@@ -14,6 +14,7 @@ locals {
   cluster_name = var.eks_cluster_name == null ? "bufstream-${local.deploy_id}" : var.eks_cluster_name
   vpc_name     = var.vpc_name == null ? "bufstream-vpc-${local.deploy_id}" : var.vpc_name
   rds_id       = var.rds_identifier == null ? local.deploy_id : var.rds_identifier
+  aurora_id    = var.aurora_identifier == null ? local.deploy_id : var.aurora_identifier
 }
 
 module "network" {
@@ -46,7 +47,8 @@ module "storage" {
 }
 
 locals {
-  create_pg = var.bufstream_metadata == "postgres"
+  create_pg     = var.bufstream_metadata == "postgres"
+  create_aurora = var.bufstream_metadata == "aurora"
 }
 
 module "postgres" {
@@ -62,6 +64,27 @@ module "postgres" {
   postgres_version      = var.postgres_version
   rds_allocated_storage = var.rds_allocated_storage
   postgres_db_name      = var.postgres_db_name
+}
+
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+module "aurora" {
+  source = "./metadata/aurora"
+  count  = local.create_aurora ? 1 : 0
+
+  vpc_id                 = var.vpc_id == "" ? module.network.vpc_id : var.vpc_id
+  subnet_ids             = length(var.subnet_ids) == 0 ? module.network.private_subnet_ids : var.subnet_ids
+  aurora_identifier      = local.aurora_id
+  postgres_username      = var.postgres_username
+  aurora_port            = var.aurora_port
+  aurora_instance_class  = var.aurora_instance_class
+  postgres_version       = var.postgres_version
+  postgres_db_name       = var.postgres_db_name
+  availability_zone      = var.availability_zone == null ? data.aws_availability_zones.available.names[0] : var.availability_zone
+  aws_region             = var.region
+  cluster_instance_count = var.cluster_instance_count
 }
 
 # We create this here so we can have the hostname ready for bufstream.
@@ -126,11 +149,24 @@ locals {
     dsn         = module.postgres[0].pg_dsn
     aws_profile = var.profile
   }) : null
+
+  aurora_secret = local.create_aurora ? templatefile("${path.module}/pg-setup.sh.tpl", {
+    region      = var.region
+    secret_arn  = module.aurora[0].pg_pw_secret_arn
+    dsn         = module.aurora[0].pg_dsn
+    aws_profile = var.profile
+  }) : null
 }
 
 resource "local_file" "pg_secret_script" {
   count    = var.generate_config_files_path != null && local.create_pg ? 1 : 0
   content  = local.pg_secret
+  filename = "${var.generate_config_files_path}/aws-pg-setup.sh"
+}
+
+resource "local_file" "aurora_secret_script" {
+  count    = var.generate_config_files_path != null && local.create_aurora ? 1 : 0
+  content  = local.aurora_secret
   filename = "${var.generate_config_files_path}/aws-pg-setup.sh"
 }
 
