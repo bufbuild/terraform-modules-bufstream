@@ -9,11 +9,6 @@ variable "cluster_instance_count" {
   default     = 2
 }
 
-variable "aws_region" {
-  description = "region to provision resources"
-  type        = string
-}
-
 variable "postgres_username" {
   description = "Postgres username for aurora instance"
   type        = string

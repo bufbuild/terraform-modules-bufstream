@@ -14,7 +14,7 @@ resource "aws_secretsmanager_secret" "aurora_pass_secret" {
 
 resource "aws_secretsmanager_secret_version" "aurora_pass_sv" {
   secret_id     = aws_secretsmanager_secret.aurora_pass_secret.id
-  secret_string = jsonencode({ "password" = "${random_string.aurora_password.result}" }) # matches 'manage_master_password' format
+  secret_string = jsonencode({ "password" = random_string.aurora_password.result }) # matches 'manage_master_password' format
 }
 
 resource "aws_security_group" "aurora" {
