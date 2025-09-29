@@ -66,6 +66,10 @@ module "postgres" {
   postgres_db_name      = var.postgres_db_name
 }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 module "aurora" {
   source = "./metadata/aurora"
   count  = local.create_aurora ? 1 : 0
@@ -78,7 +82,7 @@ module "aurora" {
   aurora_instance_class  = var.aurora_instance_class
   postgres_version       = var.postgres_version
   postgres_db_name       = var.postgres_db_name
-  availability_zone      = var.availability_zone
+  availability_zone      = var.availability_zone == null ? data.aws_availability_zones.available.names[0] : var.availability_zone
   aws_region             = var.region
   cluster_instance_count = var.cluster_instance_count
 }

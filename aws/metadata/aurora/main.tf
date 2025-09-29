@@ -27,7 +27,6 @@ resource "aws_security_group" "aurora" {
     protocol    = "tcp"
     cidr_blocks = [data.aws_vpc.buf.cidr_block]
   }
-
 }
 
 resource "aws_db_subnet_group" "aurora" {
@@ -77,5 +76,3 @@ resource "aws_rds_cluster_instance" "bufstream_aurora_instances" {
   engine_version       = aws_rds_cluster.bufpg.engine_version
   db_subnet_group_name = aws_db_subnet_group.aurora.name
 }
-
-

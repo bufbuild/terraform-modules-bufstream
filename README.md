@@ -79,6 +79,8 @@ If using Aurora, be aware that it attempts to use a single AZ for provisioned in
 the region variable. Most regions follow the convention of `us-east-1` -> `us-east-1a` for region -> az. This value does not have a default because
 it is different for every region.
 
+Aurora additionally implicitly uses the `postgres_username`, `postgres_version` and `postgres_db_name` variables, which are not required to be set.
+
 Required variables in `tfvars`:
 
 | Variable    | Description                                |
