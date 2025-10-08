@@ -214,3 +214,9 @@ variable "cluster_instance_count" {
   type        = number
   default     = 2
 }
+
+variable "storage_encrypted" {
+  description = "whether to encrypt RDS at rest"
+  type        = string
+  default     = true
+}

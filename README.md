@@ -78,6 +78,8 @@ If Aurora is selected for the metadata storage, an AWS Aurora cluster and a Secr
 If using Aurora, be aware that it attempts to use a single AZ for provisioned instances. Most regions follow the convention of `us-east-1` -> `us-east-1a` for region -> az.
 This will default to the first available AZ from the region variable.
 
+Both Aurora and RDS default to encryption being on. This can be turned off with setting `storage_encrypted` to `false`.
+
 Aurora additionally uses the `postgres_username`, `postgres_version` and `postgres_db_name` variables that Postgres uses, which are not required to be set.
 
 Required variables in `tfvars`:
