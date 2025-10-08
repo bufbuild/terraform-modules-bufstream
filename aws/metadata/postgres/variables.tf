@@ -60,3 +60,8 @@ variable "availability_zone" {
   type    = string
   default = null
 }
+
+variable "storage_encrypted" {
+  type    = string
+  default = true
+}

@@ -64,6 +64,7 @@ module "postgres" {
   postgres_version      = var.postgres_version
   rds_allocated_storage = var.rds_allocated_storage
   postgres_db_name      = var.postgres_db_name
+  storage_encrypted     = var.storage_encrypted
 }
 
 data "aws_availability_zones" "available" {
@@ -85,6 +86,7 @@ module "aurora" {
   availability_zone      = var.availability_zone == null ? data.aws_availability_zones.available.names[0] : var.availability_zone
   aws_region             = var.region
   cluster_instance_count = var.cluster_instance_count
+  storage_encrypted      = var.storage_encrypted
 }
 
 # We create this here so we can have the hostname ready for bufstream.
