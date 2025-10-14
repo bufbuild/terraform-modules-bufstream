@@ -52,15 +52,6 @@ resource "aws_s3_bucket_policy" "bucket_access" {
   policy = data.aws_iam_policy_document.secure_only.json
 }
 
-resource "aws_s3_bucket_public_access_block" "public_access_block" {
-  count                   = var.create_bucket ? 1 : 0
-  bucket                  = local.bucket_id
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
 data "aws_iam_policy_document" "bufstream_s3" {
   statement {
     effect    = "Allow"
