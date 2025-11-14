@@ -84,7 +84,6 @@ module "aurora" {
   postgres_version       = var.postgres_version
   postgres_db_name       = var.postgres_db_name
   availability_zone      = var.availability_zone == null ? data.aws_availability_zones.available.names[0] : var.availability_zone
-  aws_region             = var.region
   cluster_instance_count = var.cluster_instance_count
   storage_encrypted      = var.storage_encrypted
 }
